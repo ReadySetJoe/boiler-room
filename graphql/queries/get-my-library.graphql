@@ -1,0 +1,9 @@
+query GetMyLibrary($steamId: String!, $sort: SortOptions) {
+  getMyLibrary(steamId: $steamId, sort: $sort) {
+    id
+    name
+    image
+    url
+    playtimeForever
+  }
+}

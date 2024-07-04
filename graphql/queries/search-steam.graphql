@@ -1,0 +1,9 @@
+query SearchSteam($q: String!, $bundlesOnly: Boolean) {
+  searchSteam(q: $q, bundlesOnly: $bundlesOnly) {
+    id
+    name
+    image
+    url
+    price
+  }
+}

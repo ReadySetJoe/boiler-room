@@ -28,6 +28,14 @@ const Header = () => {
       label: 'Home',
       href: '/',
     },
+    {
+      label: 'Library',
+      href: '/library',
+    },
+    {
+      label: 'Bundles',
+      href: '/bundles',
+    },
   ];
 
   const logo = (
@@ -42,7 +50,7 @@ const Header = () => {
         letterSpacing: '.3rem',
       }}
     >
-      default
+      boiler room
     </Typography>
   );
 

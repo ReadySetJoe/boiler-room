@@ -1,29 +1,30 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth from 'next-auth';
-import EmailProvider from 'next-auth/providers/email';
-import GithubProvider from 'next-auth/providers/github';
-import GoogleProvider from 'next-auth/providers/google';
+import SteamProvider, { PROVIDER_ID } from 'next-auth-steam';
 
-import { PrismaAdapter } from '@auth/prisma-adapter';
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  return NextAuth(req, res, {
+    providers: [
+      SteamProvider(req, {
+        clientSecret: process.env.STEAM_API_KEY,
+        callbackUrl: process.env.BASE_URL + '/api/auth/callback',
+      }),
+    ],
+    callbacks: {
+      jwt({ token, account, profile }) {
+        if (account?.provider === PROVIDER_ID) {
+          token.steam = profile;
+        }
 
-import prisma from '../../../lib/prisma';
+        return token;
+      },
+      session({ session, token }) {
+        if ('steam' in token) {
+          session.user.steam = token.steam;
+        }
 
-import type { NextAuthOptions } from 'next-auth';
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    }),
-  ],
-};
-
-export default NextAuth(authOptions);
+        return session;
+      },
+    },
+  });
+}

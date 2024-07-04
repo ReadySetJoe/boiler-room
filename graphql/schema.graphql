@@ -1,8 +1,40 @@
-type Query {
-  helloWorldQuery: String
-  printMessage(message: String!): String
+type SteamGame {
+  id: ID
+  name: String!
+  image: String
+  url: String
+  price: String
+  playtimeForever: Int
 }
 
-type Mutation {
-  helloWorldMutation: String
+type SteamBundle {
+  id: ID
+  name: String!
+  image: String
+  url: String
+  price: String
+  games: [SteamGame]
+}
+
+enum SortField {
+  NAME
+  PRICE
+  PLAYTIME_FOREVER
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
+input SortOptions {
+  field: SortField!
+  order: SortOrder!
+}
+
+type Query {
+  getBundlesByGameName(name: String!): [SteamBundle]
+  getMyBundles(steamId: String!, sort: SortOptions): [SteamBundle]
+  getMyLibrary(steamId: String!, sort: SortOptions): [SteamGame]
+  searchSteam(q: String!, bundlesOnly: Boolean): [SteamGame]
 }

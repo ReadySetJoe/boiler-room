@@ -1,0 +1,15 @@
+query GetBundlesByGameName($name: String!) {
+  getBundlesByGameName(name: $name) {
+    id
+    name
+    image
+    url
+    price
+    games {
+      id
+      name
+      image
+      url
+    }
+  }
+}

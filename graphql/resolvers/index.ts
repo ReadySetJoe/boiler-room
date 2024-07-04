@@ -1,17 +1,13 @@
 import { Resolvers } from '../../generated/resolvers-types';
-import {
-  helloWorldMutation,
-  helloWorldQuery,
-  printMessage,
-} from './hello-world';
+import { getMyBundles } from './bundle';
+import { getMyLibrary } from './library';
+import { searchSteam } from './search';
 
 const resolvers: Resolvers = {
   Query: {
-    helloWorldQuery,
-    printMessage,
-  },
-  Mutation: {
-    helloWorldMutation,
+    getMyBundles,
+    getMyLibrary,
+    searchSteam,
   },
 };
 

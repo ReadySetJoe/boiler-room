@@ -16,20 +16,71 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type Mutation = {
-  __typename?: 'Mutation';
-  helloWorldMutation?: Maybe<Scalars['String']['output']>;
-};
-
 export type Query = {
   __typename?: 'Query';
-  helloWorldQuery?: Maybe<Scalars['String']['output']>;
-  printMessage?: Maybe<Scalars['String']['output']>;
+  getBundlesByGameName?: Maybe<Array<Maybe<SteamBundle>>>;
+  getMyBundles?: Maybe<Array<Maybe<SteamBundle>>>;
+  getMyLibrary?: Maybe<Array<Maybe<SteamGame>>>;
+  searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
 };
 
 
-export type QueryPrintMessageArgs = {
-  message: Scalars['String']['input'];
+export type QueryGetBundlesByGameNameArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type QueryGetMyBundlesArgs = {
+  sort?: InputMaybe<SortOptions>;
+  steamId: Scalars['String']['input'];
+};
+
+
+export type QueryGetMyLibraryArgs = {
+  sort?: InputMaybe<SortOptions>;
+  steamId: Scalars['String']['input'];
+};
+
+
+export type QuerySearchSteamArgs = {
+  bundlesOnly?: InputMaybe<Scalars['Boolean']['input']>;
+  q: Scalars['String']['input'];
+};
+
+export enum SortField {
+  Name = 'NAME',
+  PlaytimeForever = 'PLAYTIME_FOREVER',
+  Price = 'PRICE'
+}
+
+export type SortOptions = {
+  field?: InputMaybe<SortField>;
+  order?: InputMaybe<SortOrder>;
+};
+
+export enum SortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+export type SteamBundle = {
+  __typename?: 'SteamBundle';
+  games?: Maybe<Array<Maybe<SteamGame>>>;
+  id?: Maybe<Scalars['ID']['output']>;
+  image?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  price?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+};
+
+export type SteamGame = {
+  __typename?: 'SteamGame';
+  id?: Maybe<Scalars['ID']['output']>;
+  image?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  playtimeForever?: Maybe<Scalars['Int']['output']>;
+  price?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -105,30 +156,59 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
-  Mutation: ResolverTypeWrapper<{}>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Query: ResolverTypeWrapper<{}>;
+  SortField: SortField;
+  SortOptions: SortOptions;
+  SortOrder: SortOrder;
+  SteamBundle: ResolverTypeWrapper<SteamBundle>;
+  SteamGame: ResolverTypeWrapper<SteamGame>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output'];
-  Mutation: {};
+  ID: Scalars['ID']['output'];
+  Int: Scalars['Int']['output'];
   Query: {};
+  SortOptions: SortOptions;
+  SteamBundle: SteamBundle;
+  SteamGame: SteamGame;
   String: Scalars['String']['output'];
 }>;
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  helloWorldMutation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  getBundlesByGameName?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetBundlesByGameNameArgs, 'name'>>;
+  getMyBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetMyBundlesArgs, 'steamId'>>;
+  getMyLibrary?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetMyLibraryArgs, 'steamId'>>;
+  searchSteam?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QuerySearchSteamArgs, 'q'>>;
 }>;
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  helloWorldQuery?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  printMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryPrintMessageArgs, 'message'>>;
+export type SteamBundleResolvers<ContextType = any, ParentType extends ResolversParentTypes['SteamBundle'] = ResolversParentTypes['SteamBundle']> = ResolversObject<{
+  games?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SteamGameResolvers<ContextType = any, ParentType extends ResolversParentTypes['SteamGame'] = ResolversParentTypes['SteamGame']> = ResolversObject<{
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  playtimeForever?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
-  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  SteamBundle?: SteamBundleResolvers<ContextType>;
+  SteamGame?: SteamGameResolvers<ContextType>;
 }>;
 

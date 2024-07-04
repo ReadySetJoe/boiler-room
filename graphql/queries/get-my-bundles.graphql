@@ -1,0 +1,15 @@
+query GetMyBundles($steamId: String!, $sort: SortOptions) {
+  getMyBundles(steamId: $steamId, sort: $sort) {
+    id
+    name
+    image
+    url
+    price
+    games {
+      id
+      name
+      image
+      url
+    }
+  }
+}
