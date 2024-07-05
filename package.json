@@ -25,6 +25,7 @@
     "apollo-server-core": "^3.12.1",
     "aws-sdk": "^2.1450.0",
     "axios": "^1.5.0",
+    "currency.js": "^2.0.4",
     "date-fns": "^2.30.0",
     "fs": "^0.0.1-security",
     "graphql": "^16.8.0",

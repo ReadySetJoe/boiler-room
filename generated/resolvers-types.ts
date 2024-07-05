@@ -54,8 +54,8 @@ export enum SortField {
 }
 
 export type SortOptions = {
-  field?: InputMaybe<SortField>;
-  order?: InputMaybe<SortOrder>;
+  field: SortField;
+  order: SortOrder;
 };
 
 export enum SortOrder {
@@ -65,6 +65,7 @@ export enum SortOrder {
 
 export type SteamBundle = {
   __typename?: 'SteamBundle';
+  discount?: Maybe<Scalars['String']['output']>;
   games?: Maybe<Array<Maybe<SteamGame>>>;
   id?: Maybe<Scalars['ID']['output']>;
   image?: Maybe<Scalars['String']['output']>;
@@ -187,6 +188,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type SteamBundleResolvers<ContextType = any, ParentType extends ResolversParentTypes['SteamBundle'] = ResolversParentTypes['SteamBundle']> = ResolversObject<{
+  discount?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   games?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

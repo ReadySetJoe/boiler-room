@@ -1,11 +1,16 @@
 import { useLazyQuery } from '@apollo/client';
-import { Autocomplete, Box, Stack, TextField, Typography } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { SearchSteamDocument } from '../generated/graphql';
 
 const Landing = () => {
-  const { data: session } = useSession();
   const [search, setSearch] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -42,7 +47,7 @@ const Landing = () => {
 
   return (
     <Stack spacing={5} paddingTop={5}>
-      <Typography variant="h4">Welcome! Let's find some deals</Typography>
+      <Typography variant="h4">Welcome! Let's find some deals:</Typography>
       <Autocomplete
         inputValue={search}
         onInputChange={(_, newValue) => {
@@ -78,6 +83,7 @@ const Landing = () => {
         bundlesData?.searchSteam.length === 0 && (
           <Typography>No bundles found for {selectedGame}</Typography>
         )}
+      <Button href="/library">Or start by using your library</Button>
     </Stack>
   );
 };

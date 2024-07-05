@@ -18,7 +18,6 @@ export const getMyLibrary: QueryResolvers['getMyLibrary'] = async (
     name: game.name,
     image: `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`,
     playtime: game.playtime_forever,
-    price: game.price_overview?.final_formatted || 'Free',
   }));
 
   if (sort) {

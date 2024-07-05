@@ -5,6 +5,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import { useSession } from 'next-auth/react';
@@ -12,9 +13,41 @@ import { useState } from 'react';
 import { GetMyLibraryDocument, SortField } from '../generated/graphql';
 import { SortOrder } from '../generated/resolvers-types';
 
+type SortOption = {
+  label: string;
+  sort: { field: SortField; order: SortOrder };
+};
+
+const sortOptions: SortOption[] = [
+  {
+    label: 'Playtime - Longest First',
+    sort: { field: SortField.PlaytimeForever, order: SortOrder.Desc },
+  },
+  {
+    label: 'Playtime - Shortest First',
+    sort: { field: SortField.PlaytimeForever, order: SortOrder.Asc },
+  },
+  {
+    label: 'Name - A to Z',
+    sort: { field: SortField.Name, order: SortOrder.Asc },
+  },
+  {
+    label: 'Name - Z to A',
+    sort: { field: SortField.Name, order: SortOrder.Desc },
+  },
+  {
+    label: 'Price - Lowest First',
+    sort: { field: SortField.Price, order: SortOrder.Asc },
+  },
+  {
+    label: 'Price - Highest First',
+    sort: { field: SortField.Price, order: SortOrder.Desc },
+  },
+];
+
 const Library = () => {
-  const [sortField, setSortField] = useState<SortField>();
-  const [sortOrder, setSortOrder] = useState<SortOrder>();
+  const [sortOption, setSortOption] = useState<SortOption>(sortOptions[0]);
+  const [search, setSearch] = useState<string>('');
 
   const session = useSession();
 
@@ -22,10 +55,7 @@ const Library = () => {
     skip: session.status !== 'authenticated',
     variables: {
       steamId: session?.data?.user.steam.steamid,
-      sort: {
-        field: sortField || SortField.PlaytimeForever,
-        order: sortOrder || SortOrder.Desc,
-      },
+      sort: sortOption.sort,
     },
   });
 
@@ -47,42 +77,60 @@ const Library = () => {
     );
   }
 
+  let games = data?.getMyLibrary;
+
+  if (search) {
+    games = games.filter(game =>
+      game.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
   return (
     <Container>
-      <Typography variant="h4" sx={{ my: 3 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>
         Library
       </Typography>
       <Stack spacing={2}>
-        <Select
-          value={sortField}
-          label="Sort by..."
-          onChange={e => setSortField(e.target.value as SortField)}
-        >
-          <MenuItem value={SortField.PlaytimeForever}>Playtime</MenuItem>
-          <MenuItem value={SortField.Name}>Name</MenuItem>
-          <MenuItem value={SortField.Price}>Price</MenuItem>
-        </Select>
-        <Select
-          value={sortOrder}
-          label="Sort direction"
-          onChange={e => setSortOrder(e.target.value as SortOrder)}
-        >
-          <MenuItem value={SortOrder.Asc}>Ascending</MenuItem>
-          <MenuItem value={SortOrder.Desc}>Descending</MenuItem>
-        </Select>
+        <Stack spacing={1} sx={{ pb: 2 }}>
+          <TextField
+            label="Search"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <Select
+            value={sortOption.label}
+            onChange={e => {
+              const selectedOption = sortOptions.find(
+                option => option.label === e.target.value
+              );
+              setSortOption(selectedOption);
+            }}
+          >
+            {sortOptions.map(option => (
+              <MenuItem key={option.label} value={option.label}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </Stack>
         {loading ? (
           <Typography>Loading your library...</Typography>
         ) : (
-          data?.getMyLibrary.map(game => (
-            <Stack
-              key={game.id}
-              direction="row"
-              alignItems="center"
-              spacing={2}
+          games.map(game => (
+            <Button
+              href={`/bundles/${game.name}`}
+              sx={{ width: 'fit-content' }}
             >
-              <img src={game.image} alt={game.name} width={30} height={30} />
-              <Typography>{game.name}</Typography>
-            </Stack>
+              <Stack
+                key={game.id}
+                direction="row"
+                alignItems="center"
+                spacing={2}
+              >
+                <img src={game.image} alt={game.name} width={30} height={30} />
+                <Typography variant="h6">{game.name}</Typography>
+              </Stack>
+            </Button>
           ))
         )}
       </Stack>

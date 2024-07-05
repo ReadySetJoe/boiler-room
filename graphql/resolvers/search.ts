@@ -6,7 +6,6 @@ export const searchSteam: QueryResolvers['searchSteam'] = async (
   _parent,
   { q, bundlesOnly }
 ) => {
-  console.log('made it here');
   const res = await axios.get(
     `https://store.steampowered.com/search/results?term=${q}&force_infinite=1&${
       bundlesOnly ? 'category1=996' : ''

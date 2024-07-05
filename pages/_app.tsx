@@ -36,7 +36,7 @@ export default function App({
   return (
     <ApolloProvider client={client}>
       <Head>
-        <title>Steam Bundle Finder</title>
+        <title>Boiler Room: Steam Utilities with Utility (Hopefully)</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SessionProvider session={session}>

@@ -5,6 +5,7 @@ query GetBundlesByGameName($name: String!) {
     image
     url
     price
+    discount
     games {
       id
       name
