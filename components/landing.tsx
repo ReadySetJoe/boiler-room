@@ -64,7 +64,7 @@ const Landing = () => {
         )}
       />
       <Stack spacing={2}>
-        {bundlesLoading ? (
+        {selectedGame && bundlesLoading ? (
           <Typography>Loading bundles...</Typography>
         ) : (
           bundlesData?.searchSteam.map(game => (
