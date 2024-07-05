@@ -65,12 +65,10 @@ const Library = () => {
         <Typography variant="h4" sx={{ my: 3 }}>
           Library
         </Typography>
-        <Typography>You need to be logged in to see your library.</Typography>
-        <Button
-          variant="contained"
-          href="/api/auth/signin"
-          disabled={!!session}
-        >
+        <Typography sx={{ my: 3 }}>
+          You need to be logged in to see your library.
+        </Typography>
+        <Button variant="contained" href="/api/auth/signin">
           Sign in
         </Button>
       </Container>
