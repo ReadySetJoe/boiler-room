@@ -48,6 +48,10 @@ const Landing = () => {
   return (
     <Stack spacing={5} paddingTop={5}>
       <Typography variant="h4">Welcome! Let's find some deals:</Typography>
+      <Button href="/library" variant="contained" size="large">
+        Start by using your library
+      </Button>
+      <Typography>Or search for bundles for any game:</Typography>
       <Autocomplete
         inputValue={search}
         onInputChange={(_, newValue) => {
@@ -83,7 +87,6 @@ const Landing = () => {
         bundlesData?.searchSteam.length === 0 && (
           <Typography>No bundles found for {selectedGame}</Typography>
         )}
-      <Button href="/library">Or start by using your library</Button>
     </Stack>
   );
 };

@@ -29,7 +29,6 @@ export default function Login() {
       label: 'Sign Out',
       onClick: () => {
         signOut();
-        router.reload();
       },
     },
   ];
