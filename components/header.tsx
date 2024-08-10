@@ -36,6 +36,10 @@ const Header = () => {
       label: 'Bundles',
       href: '/bundles',
     },
+    {
+      label: 'Buddies',
+      href: '/buddies',
+    },
   ];
 
   const logo = (

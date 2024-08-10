@@ -20,7 +20,9 @@ export type Query = {
   __typename?: 'Query';
   getBundlesByGameName?: Maybe<Array<Maybe<SteamBundle>>>;
   getMyBundles?: Maybe<Array<Maybe<SteamBundle>>>;
+  getMyFriends?: Maybe<Array<Maybe<SteamFriend>>>;
   getMyLibrary?: Maybe<Array<Maybe<SteamGame>>>;
+  getSharedGames?: Maybe<Array<Maybe<SteamGame>>>;
   searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
 };
 
@@ -36,9 +38,19 @@ export type QueryGetMyBundlesArgs = {
 };
 
 
+export type QueryGetMyFriendsArgs = {
+  steamId: Scalars['String']['input'];
+};
+
+
 export type QueryGetMyLibraryArgs = {
   sort?: InputMaybe<SortOptions>;
   steamId: Scalars['String']['input'];
+};
+
+
+export type QueryGetSharedGamesArgs = {
+  steamIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -72,6 +84,13 @@ export type SteamBundle = {
   name: Scalars['String']['output'];
   price?: Maybe<Scalars['String']['output']>;
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type SteamFriend = {
+  __typename?: 'SteamFriend';
+  avatar?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  name: Scalars['String']['output'];
 };
 
 export type SteamGame = {
@@ -164,6 +183,7 @@ export type ResolversTypes = ResolversObject<{
   SortOptions: SortOptions;
   SortOrder: SortOrder;
   SteamBundle: ResolverTypeWrapper<SteamBundle>;
+  SteamFriend: ResolverTypeWrapper<SteamFriend>;
   SteamGame: ResolverTypeWrapper<SteamGame>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 }>;
@@ -176,6 +196,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SortOptions: SortOptions;
   SteamBundle: SteamBundle;
+  SteamFriend: SteamFriend;
   SteamGame: SteamGame;
   String: Scalars['String']['output'];
 }>;
@@ -183,7 +204,9 @@ export type ResolversParentTypes = ResolversObject<{
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getBundlesByGameName?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetBundlesByGameNameArgs, 'name'>>;
   getMyBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetMyBundlesArgs, 'steamId'>>;
+  getMyFriends?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamFriend']>>>, ParentType, ContextType, RequireFields<QueryGetMyFriendsArgs, 'steamId'>>;
   getMyLibrary?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetMyLibraryArgs, 'steamId'>>;
+  getSharedGames?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetSharedGamesArgs, 'steamIds'>>;
   searchSteam?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QuerySearchSteamArgs, 'q'>>;
 }>;
 
@@ -195,6 +218,13 @@ export type SteamBundleResolvers<ContextType = any, ParentType extends Resolvers
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   price?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SteamFriendResolvers<ContextType = any, ParentType extends ResolversParentTypes['SteamFriend'] = ResolversParentTypes['SteamFriend']> = ResolversObject<{
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -211,6 +241,7 @@ export type SteamGameResolvers<ContextType = any, ParentType extends ResolversPa
 export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   SteamBundle?: SteamBundleResolvers<ContextType>;
+  SteamFriend?: SteamFriendResolvers<ContextType>;
   SteamGame?: SteamGameResolvers<ContextType>;
 }>;
 

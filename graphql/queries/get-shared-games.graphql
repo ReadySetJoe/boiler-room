@@ -1,0 +1,8 @@
+query GetSharedGames($steamIds: [String!]!) {
+  getSharedGames(steamIds: $steamIds) {
+    id
+    name
+    image
+    url
+  }
+}

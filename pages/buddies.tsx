@@ -1,0 +1,102 @@
+import { useLazyQuery, useQuery } from '@apollo/client';
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Container,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import {
+  GetMyFriendsDocument,
+  GetSharedGamesDocument,
+} from '../generated/graphql';
+
+const BuddiesPage = () => {
+  const session = useSession();
+  const steamId = session?.data?.user.steam.steamid;
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const { data, loading } = useQuery(GetMyFriendsDocument, {
+    skip: session.status !== 'authenticated',
+    variables: {
+      steamId,
+    },
+  });
+  const friends = data?.getMyFriends ?? [];
+
+  const [getSharedGames, { data: sharedGamesData }] = useLazyQuery(
+    GetSharedGamesDocument
+  );
+  const sharedGames = sharedGamesData?.getSharedGames ?? [];
+
+  const onClick = async () => {
+    getSharedGames({
+      variables: {
+        steamIds: [...selectedIds, steamId],
+      },
+    });
+  };
+
+  return (
+    <Container>
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        Where we droppin?
+      </Typography>
+      <Typography sx={{ mb: 3 }}>
+        This should help you find which games you and your friends have in
+        common.
+      </Typography>
+      {loading && <CircularProgress />}
+      <Box>
+        {friends.map(f => (
+          <Button
+            onClick={() =>
+              selectedIds.includes(f.id)
+                ? setSelectedIds([...selectedIds.filter(id => id !== f.id)])
+                : setSelectedIds([...selectedIds, f.id])
+            }
+            variant={selectedIds.includes(f.id) ? 'contained' : 'outlined'}
+            sx={{ m: 1, pl: 0 }}
+          >
+            <Checkbox checked={selectedIds.includes(f.id)} />
+            <Avatar src={f.avatar} sx={{ mr: 1 }} />
+            {f.name}
+          </Button>
+        ))}
+      </Box>
+      <Stack>
+        <Button
+          disabled={selectedIds.length === 0}
+          variant="contained"
+          sx={{ m: 1 }}
+          onClick={onClick}
+        >
+          Find shared games
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => setSelectedIds([])}
+          disabled={selectedIds.length === 0}
+        >
+          Clear all
+        </Button>
+      </Stack>
+      {sharedGames.length > 0 &&
+        sharedGames.map(g => (
+          <a href={g.url} target="_blank" rel="noreferrer noopener">
+            <Button>
+              <Avatar src={g.image} />
+              {g.name}
+            </Button>
+          </a>
+        ))}
+    </Container>
+  );
+};
+
+export default BuddiesPage;

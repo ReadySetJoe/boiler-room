@@ -17,6 +17,12 @@ type SteamBundle {
   discount: String
 }
 
+type SteamFriend {
+  id: ID
+  name: String!
+  avatar: String
+}
+
 enum SortField {
   NAME
   PRICE
@@ -37,5 +43,7 @@ type Query {
   getBundlesByGameName(name: String!): [SteamBundle]
   getMyBundles(steamId: String!, sort: SortOptions): [SteamBundle]
   getMyLibrary(steamId: String!, sort: SortOptions): [SteamGame]
+  getMyFriends(steamId: String!): [SteamFriend]
+  getSharedGames(steamIds: [String!]!): [SteamGame]
   searchSteam(q: String!, bundlesOnly: Boolean): [SteamGame]
 }

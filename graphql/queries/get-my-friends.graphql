@@ -1,0 +1,7 @@
+query GetMyFriends($steamId: String!) {
+  getMyFriends(steamId: $steamId) {
+    id
+    name
+    avatar
+  }
+}
