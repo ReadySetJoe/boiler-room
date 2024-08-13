@@ -97,6 +97,9 @@ const BuddiesPage = () => {
             </Button>
           </a>
         ))}
+      {sharedGames.length === 0 && !sharedGamesLoading && (
+        <Typography>No shared games found</Typography>
+      )}
     </Container>
   );
 };

@@ -51,7 +51,6 @@ const Library = () => {
 
   const session = useSession();
 
-  console.log('session?.data?.user.steam', session?.data?.user.steam);
   const { data, loading } = useQuery(GetMyLibraryDocument, {
     skip: session.status !== 'authenticated',
     variables: {

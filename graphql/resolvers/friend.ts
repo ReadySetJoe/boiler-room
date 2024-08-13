@@ -22,8 +22,6 @@ export const getMyFriends: QueryResolvers['getMyFriends'] = async (
     `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${process.env.STEAM_API_KEY}&steamids=${friendIds}`
   );
 
-  console.log('res.data', friendSummariesResponse.data.response.players);
-
   const output = friendSummariesResponse.data.response.players.map(p => ({
     id: p.steamid,
     avatar: p.avatar,
