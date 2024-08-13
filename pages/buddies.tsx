@@ -29,9 +29,10 @@ const BuddiesPage = () => {
   });
   const friends = data?.getMyFriends ?? [];
 
-  const [getSharedGames, { data: sharedGamesData }] = useLazyQuery(
-    GetSharedGamesDocument
-  );
+  const [
+    getSharedGames,
+    { data: sharedGamesData, loading: sharedGamesLoading },
+  ] = useLazyQuery(GetSharedGamesDocument);
   const sharedGames = sharedGamesData?.getSharedGames ?? [];
 
   const onClick = async () => {
@@ -86,6 +87,7 @@ const BuddiesPage = () => {
           Clear all
         </Button>
       </Stack>
+      {sharedGamesLoading && <CircularProgress />}
       {sharedGames.length > 0 &&
         sharedGames.map(g => (
           <a href={g.url} target="_blank" rel="noreferrer noopener">
