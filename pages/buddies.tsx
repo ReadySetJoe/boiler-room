@@ -98,7 +98,9 @@ const BuddiesPage = () => {
           </a>
         ))}
       {sharedGames.length === 0 && !sharedGamesLoading && (
-        <Typography>No shared games found</Typography>
+        <Typography>
+          No shared games found (or their list is private)
+        </Typography>
       )}
     </Container>
   );
