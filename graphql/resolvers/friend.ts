@@ -47,6 +47,7 @@ export const getSharedGames: QueryResolvers['getSharedGames'] = async (
         id: game.appid,
         name: game.name,
         image: `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`,
+        url: `https://store.steampowered.com/app/${game.appid}`,
       }));
     })
   );
@@ -57,7 +58,6 @@ export const getSharedGames: QueryResolvers['getSharedGames'] = async (
       allGames.set(game.id, game);
     }
   }
-
   allGames.forEach((val, key) => {
     const hasGame = friendsGamesLists.every(
       list => list.filter(game => game.id === key).length > 0
@@ -67,5 +67,5 @@ export const getSharedGames: QueryResolvers['getSharedGames'] = async (
     }
   });
 
-  return allGames.values();
+  return allGames.values() as any;
 };

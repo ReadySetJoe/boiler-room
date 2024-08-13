@@ -69,11 +69,11 @@ const BuddiesPage = () => {
           </Button>
         ))}
       </Box>
-      <Stack>
+      <Stack sx={{ pb: 4 }}>
         <Button
           disabled={selectedIds.length === 0}
           variant="contained"
-          sx={{ m: 1 }}
+          sx={{ my: 1 }}
           onClick={onClick}
         >
           Find shared games
@@ -89,8 +89,8 @@ const BuddiesPage = () => {
       {sharedGames.length > 0 &&
         sharedGames.map(g => (
           <a href={g.url} target="_blank" rel="noreferrer noopener">
-            <Button>
-              <Avatar src={g.image} />
+            <Button variant="outlined" sx={{ m: 1 }}>
+              <Avatar src={g.image} sx={{ mr: 2 }} />
               {g.name}
             </Button>
           </a>
