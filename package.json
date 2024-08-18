@@ -1,7 +1,7 @@
 {
-  "name": "default-app",
+  "name": "steam-boiler-room",
   "version": "1.0.0",
-  "description": "a default app",
+  "description": "Steam Boiler Room",
   "scripts": {
     "build": "prisma generate && next build",
     "dev": "next dev",
