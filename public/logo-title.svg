@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <!-- Fluffy Steam Clouds (trailing off to the right) -->
+  <circle cx="25" cy="15" r="10" fill="#c7d5e0"/>
+  <circle cx="32" cy="10" r="9" fill="#c7d5e0"/>
+  <circle cx="41" cy="12" r="8" fill="#c7d5e0"/>
+  <circle cx="50" cy="15" r="7" fill="#c7d5e0"/>
+  <circle cx="58" cy="18" r="6" fill="#c7d5e0"/>
+  <circle cx="69" cy="20" r="5" fill="#c7d5e0"/>
+  <circle cx="78" cy="22" r="4" fill="#c7d5e0"/>
+
+  <!-- Boiler pipe (moved to left side) -->
+  <rect x="25" y="15" width="20" height="30" fill="#3d6a8a"/>
+
+  <!-- Main boiler body -->
+  <rect x="20" y="30" width="60" height="60" rx="10" fill="#2a475e"/>
+
+  <!-- Boiler highlight -->
+  <rect x="25" y="35" width="50" height="50" rx="8" fill="#3d6a8a"/>
+
+  <!-- Gauge -->
+  <circle cx="50" cy="60" r="15" fill="#1b2838"/>
+  <circle cx="50" cy="60" r="12" fill="#66c0f4"/>
+  <path d="M50 52 L50 60 L58 60" stroke="#2a475e" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Rivets -->
+  <circle cx="30" cy="40" r="3" fill="#66c0f4"/>
+  <circle cx="70" cy="40" r="3" fill="#66c0f4"/>
+  <circle cx="30" cy="80" r="3" fill="#66c0f4"/>
+  <circle cx="70" cy="80" r="3" fill="#66c0f4"/>
+
+  <!-- Text "Steam Boiler Room" -->
+  <text x="100" y="25" font-family="monospace" font-size="24" fill="#c7d5e0">Steam</text>
+  <text x="100" y="55" font-family="monospace" font-size="24" fill="#c7d5e0">Boiler</text>
+  <text x="100" y="85" font-family="monospace" font-size="24" fill="#c7d5e0">Room</text>
+</svg>

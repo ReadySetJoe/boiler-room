@@ -10,6 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import Login from './login';
 
 const Header = () => {
@@ -43,19 +45,14 @@ const Header = () => {
   ];
 
   const logo = (
-    <Typography
-      variant="h6"
-      noWrap
-      component="a"
-      href="/"
-      sx={{
-        mr: 2,
-        fontWeight: 700,
-        letterSpacing: '.3rem',
-      }}
-    >
-      boiler room
-    </Typography>
+    <Link href="/">
+      <Image
+        src="/logo-title.svg"
+        alt="Steam Boiler Room"
+        width={200}
+        height={50}
+      />
+    </Link>
   );
 
   const desktopNav = navLinks.map(({ label, href }) => (
