@@ -22,7 +22,7 @@ export type Query = {
   getMyBundles?: Maybe<Array<Maybe<SteamBundle>>>;
   getMyFriends?: Maybe<Array<Maybe<SteamFriend>>>;
   getMyLibrary?: Maybe<Array<Maybe<SteamGame>>>;
-  getSharedGames?: Maybe<Array<Maybe<SteamGame>>>;
+  getSharedGames?: Maybe<Array<Maybe<SharedGame>>>;
   searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
 };
 
@@ -59,6 +59,12 @@ export type QuerySearchSteamArgs = {
   q: Scalars['String']['input'];
 };
 
+export type SharedGame = {
+  __typename?: 'SharedGame';
+  friends?: Maybe<Array<Maybe<SteamFriend>>>;
+  game?: Maybe<SteamGame>;
+};
+
 export enum SortField {
   Name = 'NAME',
   PlaytimeForever = 'PLAYTIME_FOREVER',
@@ -90,7 +96,7 @@ export type SteamFriend = {
   __typename?: 'SteamFriend';
   avatar?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
 };
 
 export type SteamGame = {
@@ -179,6 +185,7 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Query: ResolverTypeWrapper<{}>;
+  SharedGame: ResolverTypeWrapper<SharedGame>;
   SortField: SortField;
   SortOptions: SortOptions;
   SortOrder: SortOrder;
@@ -194,6 +201,7 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Query: {};
+  SharedGame: SharedGame;
   SortOptions: SortOptions;
   SteamBundle: SteamBundle;
   SteamFriend: SteamFriend;
@@ -206,8 +214,14 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getMyBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetMyBundlesArgs, 'steamId'>>;
   getMyFriends?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamFriend']>>>, ParentType, ContextType, RequireFields<QueryGetMyFriendsArgs, 'steamId'>>;
   getMyLibrary?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetMyLibraryArgs, 'steamId'>>;
-  getSharedGames?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetSharedGamesArgs, 'steamIds'>>;
+  getSharedGames?: Resolver<Maybe<Array<Maybe<ResolversTypes['SharedGame']>>>, ParentType, ContextType, RequireFields<QueryGetSharedGamesArgs, 'steamIds'>>;
   searchSteam?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QuerySearchSteamArgs, 'q'>>;
+}>;
+
+export type SharedGameResolvers<ContextType = any, ParentType extends ResolversParentTypes['SharedGame'] = ResolversParentTypes['SharedGame']> = ResolversObject<{
+  friends?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamFriend']>>>, ParentType, ContextType>;
+  game?: Resolver<Maybe<ResolversTypes['SteamGame']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type SteamBundleResolvers<ContextType = any, ParentType extends ResolversParentTypes['SteamBundle'] = ResolversParentTypes['SteamBundle']> = ResolversObject<{
@@ -224,7 +238,7 @@ export type SteamBundleResolvers<ContextType = any, ParentType extends Resolvers
 export type SteamFriendResolvers<ContextType = any, ParentType extends ResolversParentTypes['SteamFriend'] = ResolversParentTypes['SteamFriend']> = ResolversObject<{
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -240,6 +254,7 @@ export type SteamGameResolvers<ContextType = any, ParentType extends ResolversPa
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
+  SharedGame?: SharedGameResolvers<ContextType>;
   SteamBundle?: SteamBundleResolvers<ContextType>;
   SteamFriend?: SteamFriendResolvers<ContextType>;
   SteamGame?: SteamGameResolvers<ContextType>;

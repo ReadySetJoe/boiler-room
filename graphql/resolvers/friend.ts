@@ -41,29 +41,39 @@ export const getSharedGames: QueryResolvers['getSharedGames'] = async (
         `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${process.env.STEAM_API_KEY}&steamid=${id}&include_appinfo=true&format=json`
       );
 
-      return res.data.response.games.map(game => ({
-        id: game.appid,
-        name: game.name,
-        image: `http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`,
-        url: `https://store.steampowered.com/app/${game.appid}`,
-      }));
+      return res.data.response.games;
     })
   );
 
-  const allGames = new Map();
-  for (const list of friendsGamesLists) {
-    for (const game of list) {
-      allGames.set(game.id, game);
-    }
-  }
-  allGames.forEach((val, key) => {
-    const hasGame = friendsGamesLists.every(
-      list => list.filter(game => game.id === key).length > 0
-    );
-    if (!hasGame) {
-      allGames.delete(key);
-    }
-  });
+  const sharedGames = friendsGamesLists.reduce((acc, games, i) => {
+    games.forEach(g => {
+      const existingGame = acc.find(
+        sharedGame => sharedGame.game.id === g.appid
+      );
 
-  return allGames.values() as any;
+      if (existingGame) {
+        existingGame.friends.push({
+          id: steamIds[i],
+        });
+      } else {
+        acc.push({
+          game: {
+            id: g.appid,
+            name: g.name,
+            image: `http://media.steampowered.com/steamcommunity/public/images/apps/${g.appid}/${g.img_icon_url}.jpg`,
+            url: `http://store.steampowered.com/app/${g.appid}`,
+          },
+          friends: [
+            {
+              id: steamIds[i],
+            },
+          ],
+        });
+      }
+    });
+
+    return acc;
+  }, []);
+
+  return sharedGames;
 };

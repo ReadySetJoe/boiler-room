@@ -19,8 +19,13 @@ type SteamBundle {
 
 type SteamFriend {
   id: ID
-  name: String!
+  name: String
   avatar: String
+}
+
+type SharedGame {
+  game: SteamGame
+  friends: [SteamFriend]
 }
 
 enum SortField {
@@ -44,6 +49,6 @@ type Query {
   getMyBundles(steamId: String!, sort: SortOptions): [SteamBundle]
   getMyLibrary(steamId: String!, sort: SortOptions): [SteamGame]
   getMyFriends(steamId: String!): [SteamFriend]
-  getSharedGames(steamIds: [String!]!): [SteamGame]
+  getSharedGames(steamIds: [String!]!): [SharedGame]
   searchSteam(q: String!, bundlesOnly: Boolean): [SteamGame]
 }

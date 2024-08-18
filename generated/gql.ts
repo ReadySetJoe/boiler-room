@@ -17,7 +17,7 @@ const documents = {
     "query GetMyBundles($steamId: String!, $sort: SortOptions) {\n  getMyBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    games {\n      id\n      name\n      image\n      url\n    }\n  }\n}": types.GetMyBundlesDocument,
     "query GetMyFriends($steamId: String!) {\n  getMyFriends(steamId: $steamId) {\n    id\n    name\n    avatar\n  }\n}": types.GetMyFriendsDocument,
     "query GetMyLibrary($steamId: String!, $sort: SortOptions) {\n  getMyLibrary(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    playtimeForever\n  }\n}": types.GetMyLibraryDocument,
-    "query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    id\n    name\n    image\n    url\n  }\n}": types.GetSharedGamesDocument,
+    "query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    game {\n      id\n      name\n      image\n      url\n    }\n    friends {\n      id\n    }\n  }\n}": types.GetSharedGamesDocument,
     "query SearchSteam($q: String!, $bundlesOnly: Boolean) {\n  searchSteam(q: $q, bundlesOnly: $bundlesOnly) {\n    id\n    name\n    image\n    url\n    price\n  }\n}": types.SearchSteamDocument,
 };
 
@@ -54,7 +54,7 @@ export function graphql(source: "query GetMyLibrary($steamId: String!, $sort: So
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    id\n    name\n    image\n    url\n  }\n}"): (typeof documents)["query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    id\n    name\n    image\n    url\n  }\n}"];
+export function graphql(source: "query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    game {\n      id\n      name\n      image\n      url\n    }\n    friends {\n      id\n    }\n  }\n}"): (typeof documents)["query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    game {\n      id\n      name\n      image\n      url\n    }\n    friends {\n      id\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
