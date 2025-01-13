@@ -42,6 +42,10 @@ const Header = () => {
       label: 'Buddies',
       href: '/buddies',
     },
+    {
+      label: 'Twitch',
+      href: '/twitch',
+    },
   ];
 
   const logo = (

@@ -1,10 +1,30 @@
+// types/next-auth.d.ts
 import 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-      steam: any;
+      steam: {
+        steamid: string;
+        personaname: string;
+        profileurl?: string;
+        avatar: string;
+        avatarmedium?: string;
+        avatarfull?: string;
+      };
+      twitch?: {
+        sub: string;
+        preferred_username?: string;
+        email?: string;
+        accessToken?: string;
+      };
     } & DefaultSession['user'];
+  }
+
+  interface JWT {
+    id: string;
+    steam: Session['user']['steam'];
+    twitch?: Session['user']['twitch'];
   }
 }

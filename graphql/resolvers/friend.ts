@@ -22,11 +22,13 @@ export const getMyFriends: QueryResolvers['getMyFriends'] = async (
     `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${process.env.STEAM_API_KEY}&steamids=${friendIds}`
   );
 
-  const output = friendSummariesResponse.data.response.players.map(p => ({
-    id: p.steamid,
-    avatar: p.avatar,
-    name: p.personaname,
-  }));
+  const output = friendSummariesResponse.data.response.players
+    .map(p => ({
+      id: p.steamid,
+      avatar: p.avatar,
+      name: p.personaname,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return output;
 };

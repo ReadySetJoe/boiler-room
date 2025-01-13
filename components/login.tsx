@@ -12,10 +12,10 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { PROVIDER_ID } from 'next-auth-steam';
 
 export default function Login() {
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const router = useRouter();
 
   const handleOpenUserMenu = event => {
     setAnchorElUser(event.currentTarget);
@@ -36,7 +36,7 @@ export default function Login() {
   const { data: session } = useSession();
 
   if (!session) {
-    return <Button onClick={() => signIn()}>Sign in</Button>;
+    return <Button onClick={() => signIn(PROVIDER_ID)}>Sign in</Button>;
   }
 
   const avatar = session?.user?.image ? (

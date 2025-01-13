@@ -71,7 +71,14 @@ const BuddiesPage = () => {
         common.
       </Typography>
       {loading && <CircularProgress />}
-      <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {friends.map(f => (
           <Button
             onClick={() => {
@@ -81,9 +88,8 @@ const BuddiesPage = () => {
                 : setSelectedIds([...selectedIds, f.id]);
             }}
             variant={selectedIds.includes(f.id) ? 'contained' : 'outlined'}
-            sx={{ m: 1, pl: 0 }}
+            sx={{ m: 1, p: 1 }}
           >
-            <Checkbox checked={selectedIds.includes(f.id)} />
             <Avatar src={f.avatar} sx={{ mr: 1 }} />
             {f.name}
           </Button>
@@ -118,9 +124,9 @@ const BuddiesPage = () => {
             .map(([numOwners, sharedGames]: any) => (
               <>
                 {Number(numOwners) === selectedIds.length + 1 ? (
-                  <Typography variant="h5">All of you own:</Typography>
+                  <Typography variant="h6">All of you own:</Typography>
                 ) : (
-                  <Typography variant="h5">
+                  <Typography variant="h6">
                     {numOwners} out of {selectedIds.length + 1}:
                   </Typography>
                 )}
@@ -130,13 +136,16 @@ const BuddiesPage = () => {
                     alignItems: 'center',
                   }}
                 >
-                  {sharedGames.map((sharedGame: any) => (
-                    <a
-                      href={sharedGame.game.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Button sx={{ m: 0.5 }}>
+                  {sharedGames
+                    .sort((a: any, b: any) =>
+                      a.game.name.localeCompare(b.game.name)
+                    )
+                    .map((sharedGame: any) => (
+                      <a
+                        href={sharedGame.game.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         <Stack
                           key={sharedGame.game.appid}
                           direction="row"
@@ -146,11 +155,12 @@ const BuddiesPage = () => {
                           }}
                         >
                           <Avatar src={sharedGame.game.image} sx={{ mr: 2 }} />
-                          <Typography>{sharedGame.game.name}</Typography>
+                          <Typography variant="body1">
+                            {sharedGame.game.name}
+                          </Typography>
                         </Stack>
-                      </Button>
-                    </a>
-                  ))}
+                      </a>
+                    ))}
                 </Box>
               </>
             ))}

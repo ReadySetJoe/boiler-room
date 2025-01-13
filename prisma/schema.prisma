@@ -14,7 +14,7 @@ model Account {
   provider          String
   providerAccountId String
   refresh_token     String? @db.Text
-  access_token      String? @unique @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
@@ -40,6 +40,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  steamId       String?   @unique // Added this field
+  twitchId      String?   @unique // Added this field
   accounts      Account[]
   sessions      Session[]
 }
