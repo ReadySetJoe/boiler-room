@@ -41,7 +41,6 @@ const TwitchSubStatus = () => {
 
     checkSubscription();
   }, [session?.user.twitchId]);
-  // log the session object
 
   if (!session?.user.twitchId) {
     return (
