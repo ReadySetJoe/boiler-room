@@ -6,9 +6,7 @@ import {
   SteamBundle,
 } from '../../generated/graphql';
 import { QueryResolvers } from '../../generated/resolvers-types';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma';
 
 const searchBundlesByGameNames = async (gameNames: string[]) => {
   const bundles = [] as SteamBundle[];
