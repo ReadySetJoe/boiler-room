@@ -59,7 +59,7 @@ export default function Bundles() {
   );
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Asc);
 
-  const { data, refetch } = useQuery(GetUserBundlesDocument, {
+  const { data, refetch, loading } = useQuery(GetUserBundlesDocument, {
     skip: session.status !== 'authenticated',
     variables: {
       steamId: session?.data?.user.steamId,
@@ -89,20 +89,9 @@ export default function Bundles() {
     const games = library.data.getMyLibrary;
     setTotalGames(games.length);
 
-    if (process.env.NODE_ENV === 'development') {
-      await Promise.all(
-        games.map(async game => {
-          await updateUserGameBundle({
-            variables: {
-              steamId: session?.data?.user.steamId,
-              gameName: game.name,
-            },
-          });
-          setProcessedGames(prev => prev + 1);
-        })
-      );
-    } else {
-      for (const game of games) {
+    // if (process.env.NODE_ENV === 'development') {
+    await Promise.all(
+      games.map(async game => {
         await updateUserGameBundle({
           variables: {
             steamId: session?.data?.user.steamId,
@@ -110,8 +99,19 @@ export default function Bundles() {
           },
         });
         setProcessedGames(prev => prev + 1);
-      }
-    }
+      })
+    );
+    // } else {
+    //   for (const game of games) {
+    //     await updateUserGameBundle({
+    //       variables: {
+    //         steamId: session?.data?.user.steamId,
+    //         gameName: game.name,
+    //       },
+    //     });
+    //     setProcessedGames(prev => prev + 1);
+    //   }
+    // }
 
     await refetch();
     setIsRefreshing(false);
@@ -204,6 +204,8 @@ export default function Bundles() {
           </div>
         </div>
       )}
+
+      {loading && !isRefreshing && <p>Loading bundles...</p>}
 
       {!isRefreshing &&
         data?.getUserBundles.map(bundle => (
