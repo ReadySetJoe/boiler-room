@@ -8,7 +8,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Define auth options separately for better type inference
 const authOptions = (req: NextApiRequest): AuthOptions => ({
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -54,7 +53,6 @@ const authOptions = (req: NextApiRequest): AuthOptions => ({
           });
 
           if (existingUser) {
-            // Ensure the steamId is set if it wasn't before
             if (!existingUser.steamId) {
               await prisma.user.update({
                 where: { id: existingUser.id },
@@ -64,7 +62,6 @@ const authOptions = (req: NextApiRequest): AuthOptions => ({
             return true;
           }
 
-          // Create new user with Steam
           await prisma.user.create({
             data: {
               email: user.email,
@@ -91,7 +88,6 @@ const authOptions = (req: NextApiRequest): AuthOptions => ({
 
       if (account.provider === 'twitch') {
         try {
-          // Get the current session user
           const currentUser = await prisma.session.findFirst({
             where: {
               // Look for active sessions
@@ -174,11 +170,6 @@ const authOptions = (req: NextApiRequest): AuthOptions => ({
       return token;
     },
   },
-  pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error',
-  },
-  debug: process.env.NODE_ENV === 'development',
 });
 
 // Export the handler

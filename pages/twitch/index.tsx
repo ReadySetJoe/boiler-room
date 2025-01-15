@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { ConnectTwitch } from '../components/connect-twitch';
+import { ConnectTwitch } from '../../components/connect-twitch';
 
 const TwitchSubStatus = () => {
   const { data: session } = useSession();
@@ -81,6 +81,9 @@ const TwitchSubStatus = () => {
           <span className="text-green-600">
             ✓ You are subscribed to joepowers!
           </span>
+          <a href="/twitch/bundles" className="text-blue-600">
+            View Bundles
+          </a>
         </div>
       ) : (
         <div className="space-y-2">

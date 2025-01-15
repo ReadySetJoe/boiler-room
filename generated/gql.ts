@@ -18,7 +18,9 @@ const documents = {
     "query GetMyFriends($steamId: String!) {\n  getMyFriends(steamId: $steamId) {\n    id\n    name\n    avatar\n  }\n}": types.GetMyFriendsDocument,
     "query GetMyLibrary($steamId: String!, $sort: SortOptions) {\n  getMyLibrary(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    playtimeForever\n  }\n}": types.GetMyLibraryDocument,
     "query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    game {\n      id\n      name\n      image\n      url\n    }\n    friends {\n      id\n    }\n  }\n}": types.GetSharedGamesDocument,
+    "query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {\n  getUserBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    discount\n  }\n}": types.GetUserBundlesDocument,
     "query SearchSteam($q: String!, $bundlesOnly: Boolean) {\n  searchSteam(q: $q, bundlesOnly: $bundlesOnly) {\n    id\n    name\n    image\n    url\n    price\n  }\n}": types.SearchSteamDocument,
+    "query UpdateUserBundles($steamId: String!) {\n  updateUserBundles(steamId: $steamId) {\n    id\n    name\n    image\n    url\n    price\n  }\n}": types.UpdateUserBundlesDocument,
 };
 
 /**
@@ -58,7 +60,15 @@ export function graphql(source: "query GetSharedGames($steamIds: [String!]!) {\n
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {\n  getUserBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    discount\n  }\n}"): (typeof documents)["query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {\n  getUserBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    discount\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "query SearchSteam($q: String!, $bundlesOnly: Boolean) {\n  searchSteam(q: $q, bundlesOnly: $bundlesOnly) {\n    id\n    name\n    image\n    url\n    price\n  }\n}"): (typeof documents)["query SearchSteam($q: String!, $bundlesOnly: Boolean) {\n  searchSteam(q: $q, bundlesOnly: $bundlesOnly) {\n    id\n    name\n    image\n    url\n    price\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query UpdateUserBundles($steamId: String!) {\n  updateUserBundles(steamId: $steamId) {\n    id\n    name\n    image\n    url\n    price\n  }\n}"): (typeof documents)["query UpdateUserBundles($steamId: String!) {\n  updateUserBundles(steamId: $steamId) {\n    id\n    name\n    image\n    url\n    price\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

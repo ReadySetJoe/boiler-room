@@ -16,6 +16,17 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export enum BundleSortField {
+  Discount = 'DISCOUNT',
+  Name = 'NAME',
+  Price = 'PRICE'
+}
+
+export type BundleSortOptions = {
+  field: BundleSortField;
+  order: SortOrder;
+};
+
 export type Query = {
   __typename?: 'Query';
   getBundlesByGameName?: Maybe<Array<Maybe<SteamBundle>>>;
@@ -23,7 +34,9 @@ export type Query = {
   getMyFriends?: Maybe<Array<Maybe<SteamFriend>>>;
   getMyLibrary?: Maybe<Array<Maybe<SteamGame>>>;
   getSharedGames?: Maybe<Array<Maybe<SharedGame>>>;
+  getUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
   searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
+  updateUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
 };
 
 
@@ -54,9 +67,20 @@ export type QueryGetSharedGamesArgs = {
 };
 
 
+export type QueryGetUserBundlesArgs = {
+  sort?: InputMaybe<BundleSortOptions>;
+  steamId: Scalars['String']['input'];
+};
+
+
 export type QuerySearchSteamArgs = {
   bundlesOnly?: InputMaybe<Scalars['Boolean']['input']>;
   q: Scalars['String']['input'];
+};
+
+
+export type QueryUpdateUserBundlesArgs = {
+  steamId: Scalars['String']['input'];
 };
 
 export type SharedGame = {
@@ -146,6 +170,14 @@ export type GetSharedGamesQueryVariables = Exact<{
 
 export type GetSharedGamesQuery = { __typename?: 'Query', getSharedGames?: Array<{ __typename?: 'SharedGame', game?: { __typename?: 'SteamGame', id?: string | null, name: string, image?: string | null, url?: string | null } | null, friends?: Array<{ __typename?: 'SteamFriend', id?: string | null } | null> | null } | null> | null };
 
+export type GetUserBundlesQueryVariables = Exact<{
+  steamId: Scalars['String']['input'];
+  sort?: InputMaybe<BundleSortOptions>;
+}>;
+
+
+export type GetUserBundlesQuery = { __typename?: 'Query', getUserBundles?: Array<{ __typename?: 'SteamBundle', id?: string | null, name: string, image?: string | null, url?: string | null, price?: string | null, discount?: string | null } | null> | null };
+
 export type SearchSteamQueryVariables = Exact<{
   q: Scalars['String']['input'];
   bundlesOnly?: InputMaybe<Scalars['Boolean']['input']>;
@@ -154,10 +186,19 @@ export type SearchSteamQueryVariables = Exact<{
 
 export type SearchSteamQuery = { __typename?: 'Query', searchSteam?: Array<{ __typename?: 'SteamGame', id?: string | null, name: string, image?: string | null, url?: string | null, price?: string | null } | null> | null };
 
+export type UpdateUserBundlesQueryVariables = Exact<{
+  steamId: Scalars['String']['input'];
+}>;
+
+
+export type UpdateUserBundlesQuery = { __typename?: 'Query', updateUserBundles?: Array<{ __typename?: 'SteamBundle', id?: string | null, name: string, image?: string | null, url?: string | null, price?: string | null } | null> | null };
+
 
 export const GetBundlesByGameNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetBundlesByGameName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getBundlesByGameName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}},{"kind":"Field","name":{"kind":"Name","value":"games"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]} as unknown as DocumentNode<GetBundlesByGameNameQuery, GetBundlesByGameNameQueryVariables>;
 export const GetMyBundlesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyBundles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortOptions"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMyBundles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"steamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"games"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]} as unknown as DocumentNode<GetMyBundlesQuery, GetMyBundlesQueryVariables>;
 export const GetMyFriendsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyFriends"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMyFriends"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"steamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}}]} as unknown as DocumentNode<GetMyFriendsQuery, GetMyFriendsQueryVariables>;
 export const GetMyLibraryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLibrary"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortOptions"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMyLibrary"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"steamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"playtimeForever"}}]}}]}}]} as unknown as DocumentNode<GetMyLibraryQuery, GetMyLibraryQueryVariables>;
 export const GetSharedGamesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSharedGames"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"steamIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSharedGames"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"steamIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"steamIds"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"game"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"friends"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<GetSharedGamesQuery, GetSharedGamesQueryVariables>;
+export const GetUserBundlesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserBundles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"BundleSortOptions"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUserBundles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"steamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"discount"}}]}}]}}]} as unknown as DocumentNode<GetUserBundlesQuery, GetUserBundlesQueryVariables>;
 export const SearchSteamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchSteam"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"q"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"bundlesOnly"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchSteam"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"q"},"value":{"kind":"Variable","name":{"kind":"Name","value":"q"}}},{"kind":"Argument","name":{"kind":"Name","value":"bundlesOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"bundlesOnly"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}}]} as unknown as DocumentNode<SearchSteamQuery, SearchSteamQueryVariables>;
+export const UpdateUserBundlesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UpdateUserBundles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUserBundles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"steamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"steamId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}}]} as unknown as DocumentNode<UpdateUserBundlesQuery, UpdateUserBundlesQueryVariables>;

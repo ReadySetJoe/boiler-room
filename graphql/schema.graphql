@@ -44,11 +44,24 @@ input SortOptions {
   order: SortOrder!
 }
 
+enum BundleSortField {
+  NAME
+  PRICE
+  DISCOUNT
+}
+
+input BundleSortOptions {
+  field: BundleSortField!
+  order: SortOrder!
+}
+
 type Query {
   getBundlesByGameName(name: String!): [SteamBundle]
   getMyBundles(steamId: String!, sort: SortOptions): [SteamBundle]
   getMyLibrary(steamId: String!, sort: SortOptions): [SteamGame]
   getMyFriends(steamId: String!): [SteamFriend]
   getSharedGames(steamIds: [String!]!): [SharedGame]
+  getUserBundles(steamId: String!, sort: BundleSortOptions): [SteamBundle]
   searchSteam(q: String!, bundlesOnly: Boolean): [SteamGame]
+  updateUserBundles(steamId: String!): [SteamBundle]
 }

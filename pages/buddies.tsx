@@ -34,7 +34,7 @@ const groupSharedGamesByNumberOfOwners = (sharedGames: any) => {
 
 const BuddiesPage = () => {
   const session = useSession();
-  const steamId = session?.data?.user.steam.steamid;
+  const steamId = session?.data?.user.steamId;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
 

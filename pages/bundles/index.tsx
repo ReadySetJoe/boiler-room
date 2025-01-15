@@ -8,7 +8,7 @@ const Library = () => {
 
   const { data, loading } = useQuery(GetMyBundlesDocument, {
     skip: session.status !== 'authenticated',
-    variables: { steamId: session?.data?.user.steam.steamid },
+    variables: { steamId: session?.data?.user.steamId },
   });
 
   return (

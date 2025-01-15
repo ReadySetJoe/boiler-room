@@ -16,6 +16,17 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export enum BundleSortField {
+  Discount = 'DISCOUNT',
+  Name = 'NAME',
+  Price = 'PRICE'
+}
+
+export type BundleSortOptions = {
+  field: BundleSortField;
+  order: SortOrder;
+};
+
 export type Query = {
   __typename?: 'Query';
   getBundlesByGameName?: Maybe<Array<Maybe<SteamBundle>>>;
@@ -23,7 +34,9 @@ export type Query = {
   getMyFriends?: Maybe<Array<Maybe<SteamFriend>>>;
   getMyLibrary?: Maybe<Array<Maybe<SteamGame>>>;
   getSharedGames?: Maybe<Array<Maybe<SharedGame>>>;
+  getUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
   searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
+  updateUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
 };
 
 
@@ -54,9 +67,20 @@ export type QueryGetSharedGamesArgs = {
 };
 
 
+export type QueryGetUserBundlesArgs = {
+  sort?: InputMaybe<BundleSortOptions>;
+  steamId: Scalars['String']['input'];
+};
+
+
 export type QuerySearchSteamArgs = {
   bundlesOnly?: InputMaybe<Scalars['Boolean']['input']>;
   q: Scalars['String']['input'];
+};
+
+
+export type QueryUpdateUserBundlesArgs = {
+  steamId: Scalars['String']['input'];
 };
 
 export type SharedGame = {
@@ -182,6 +206,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  BundleSortField: BundleSortField;
+  BundleSortOptions: BundleSortOptions;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Query: ResolverTypeWrapper<{}>;
@@ -198,6 +224,7 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output'];
+  BundleSortOptions: BundleSortOptions;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Query: {};
@@ -215,7 +242,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getMyFriends?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamFriend']>>>, ParentType, ContextType, RequireFields<QueryGetMyFriendsArgs, 'steamId'>>;
   getMyLibrary?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetMyLibraryArgs, 'steamId'>>;
   getSharedGames?: Resolver<Maybe<Array<Maybe<ResolversTypes['SharedGame']>>>, ParentType, ContextType, RequireFields<QueryGetSharedGamesArgs, 'steamIds'>>;
+  getUserBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetUserBundlesArgs, 'steamId'>>;
   searchSteam?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QuerySearchSteamArgs, 'q'>>;
+  updateUserBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryUpdateUserBundlesArgs, 'steamId'>>;
 }>;
 
 export type SharedGameResolvers<ContextType = any, ParentType extends ResolversParentTypes['SharedGame'] = ResolversParentTypes['SharedGame']> = ResolversObject<{

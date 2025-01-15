@@ -54,7 +54,7 @@ const Library = () => {
   const { data, loading } = useQuery(GetMyLibraryDocument, {
     skip: session.status !== 'authenticated',
     variables: {
-      steamId: session?.data?.user.steam.steamid,
+      steamId: session.data?.user.steamId,
       sort: sortOption.sort,
     },
   });
@@ -114,7 +114,7 @@ const Library = () => {
         {loading ? (
           <Typography>Loading your library...</Typography>
         ) : (
-          games.map(game => (
+          games?.map(game => (
             <Button
               href={`/bundles/${game.name}`}
               sx={{ width: 'fit-content' }}

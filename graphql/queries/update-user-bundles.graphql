@@ -1,0 +1,9 @@
+query UpdateUserBundles($steamId: String!) {
+  updateUserBundles(steamId: $steamId) {
+    id
+    name
+    image
+    url
+    price
+  }
+}

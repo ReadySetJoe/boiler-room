@@ -29,7 +29,8 @@ export const searchSteam: QueryResolvers['searchSteam'] = async (
       id: link.getAttribute('data-ds-bundleid'),
       image: images[0].getAttribute('src'),
       url: link.getAttribute('href'),
-      price: link.querySelector('.discount_final_price')?.textContent || 'Free',
+      price:
+        link.querySelector('.discount_final_price')?.textContent || 'Unknown',
     });
   }
 

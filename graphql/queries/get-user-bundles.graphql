@@ -1,0 +1,10 @@
+query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {
+  getUserBundles(steamId: $steamId, sort: $sort) {
+    id
+    name
+    image
+    url
+    price
+    discount
+  }
+}
