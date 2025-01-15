@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client';
 import { getSession } from 'next-auth/react';
-
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma';
 
 export default async function handler(req, res) {
   const session = await getSession({ req });
 
   if (!session?.user.twitchId) {
-    return res.status(401).json({ error: 'Not authenticated with Twitch' });
+    return res
+      .status(401)
+      .json({ error: `Session missing twitchId: ${session}` });
   }
 
   try {
