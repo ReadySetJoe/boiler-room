@@ -89,8 +89,20 @@ export default function Bundles() {
     const games = library.data.getMyLibrary;
     setTotalGames(games.length);
 
-    await Promise.all(
-      games.map(async game => {
+    if (process.env.NODE_ENV === 'development') {
+      await Promise.all(
+        games.map(async game => {
+          await updateUserGameBundle({
+            variables: {
+              steamId: session?.data?.user.steamId,
+              gameName: game.name,
+            },
+          });
+          setProcessedGames(prev => prev + 1);
+        })
+      );
+    } else {
+      for (const game of games) {
         await updateUserGameBundle({
           variables: {
             steamId: session?.data?.user.steamId,
@@ -98,8 +110,8 @@ export default function Bundles() {
           },
         });
         setProcessedGames(prev => prev + 1);
-      })
-    );
+      }
+    }
 
     await refetch();
     setIsRefreshing(false);
@@ -193,43 +205,44 @@ export default function Bundles() {
         </div>
       )}
 
-      {data?.getUserBundles.map(bundle => (
-        <a
-          key={bundle.id}
-          style={{
-            border: '1px solid white',
-            margin: '10px',
-            padding: '10px',
-            display: 'flex',
-            transition: 'background-color 0.3s',
-            borderRadius: '5px',
-          }}
-          href={bundle.url}
-          target="_blank"
-          rel="noreferrer"
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor = '#2d3748')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <img
-            src={bundle.image}
-            alt={bundle.name}
+      {!isRefreshing &&
+        data?.getUserBundles.map(bundle => (
+          <a
+            key={bundle.id}
             style={{
-              objectFit: 'contain',
-              marginRight: '10px',
-              width: '128px',
+              border: '1px solid white',
+              margin: '10px',
+              padding: '10px',
+              display: 'flex',
+              transition: 'background-color 0.3s',
+              borderRadius: '5px',
             }}
-          />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: '500' }}>{bundle.name}</div>
-            <div style={{ color: '#a0aec0' }}>{bundle.price}</div>
-            <div style={{ color: '#48bb78' }}>{bundle.discount}</div>
-          </div>
-        </a>
-      ))}
+            href={bundle.url}
+            target="_blank"
+            rel="noreferrer"
+            onMouseEnter={e =>
+              (e.currentTarget.style.backgroundColor = '#2d3748')
+            }
+            onMouseLeave={e =>
+              (e.currentTarget.style.backgroundColor = 'transparent')
+            }
+          >
+            <img
+              src={bundle.image}
+              alt={bundle.name}
+              style={{
+                objectFit: 'contain',
+                marginRight: '10px',
+                width: '128px',
+              }}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontWeight: '500' }}>{bundle.name}</div>
+              <div style={{ color: '#a0aec0' }}>{bundle.price}</div>
+              <div style={{ color: '#48bb78' }}>{bundle.discount}</div>
+            </div>
+          </a>
+        ))}
     </div>
   );
 }
