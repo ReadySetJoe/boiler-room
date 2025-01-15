@@ -1,16 +1,11 @@
-// pages/api/auth/[...nextauth].ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { AuthOptions } from 'next-auth';
 import TwitchProvider from 'next-auth/providers/twitch';
 import SteamProvider from 'next-auth-steam';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
-import prisma from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma';
 
-const authOptions = (
-  req: NextApiRequest,
-  prisma: PrismaClient
-): NextAuthOptions => ({
+const authOptions = (req: NextApiRequest): AuthOptions => ({
   adapter: PrismaAdapter(prisma),
   providers: [
     SteamProvider(req, {
@@ -176,5 +171,5 @@ const authOptions = (
 
 // Export the handler
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-  return await NextAuth(req, res, authOptions(req, prisma));
+  return await NextAuth(req, res, authOptions(req));
 }
