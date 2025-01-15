@@ -8,7 +8,7 @@ export function ConnectTwitch() {
   const handleConnect = async () => {
     setIsLinking(true);
     try {
-      const result = await signIn('twitch', { callbackUrl: '/twitch' });
+      await signIn('twitch');
       await updateSession();
     } catch (error) {
       console.error('Error linking Twitch account:', error);
