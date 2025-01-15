@@ -4,7 +4,9 @@ import NextAuth, { AuthOptions } from 'next-auth';
 import TwitchProvider from 'next-auth/providers/twitch';
 import SteamProvider from 'next-auth-steam';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import prisma from '../../../lib/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const authOptions = (req: NextApiRequest): AuthOptions => ({
   adapter: PrismaAdapter(prisma),

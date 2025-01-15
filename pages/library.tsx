@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { GetMyLibraryDocument, SortField } from '../generated/graphql';
 import { SortOrder } from '../generated/resolvers-types';
@@ -68,7 +68,7 @@ const Library = () => {
         <Typography sx={{ my: 3 }}>
           You need to be logged in to see your library.
         </Typography>
-        <Button variant="contained" href="/api/auth/signin">
+        <Button variant="contained" onClick={() => signIn('steam')}>
           Sign in
         </Button>
       </Container>

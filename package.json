@@ -5,9 +5,13 @@
   "scripts": {
     "build": "prisma generate && prisma migrate deploy && next build",
     "dev": "next dev",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
     "start": "next start",
     "codegen": "graphql-codegen --config codegen.ts",
-    "migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@apollo/client": "^3.8.3",

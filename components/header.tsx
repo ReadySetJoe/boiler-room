@@ -35,10 +35,6 @@ const Header = () => {
       href: '/library',
     },
     {
-      label: 'Bundles',
-      href: '/bundles',
-    },
-    {
       label: 'Buddies',
       href: '/buddies',
     },
