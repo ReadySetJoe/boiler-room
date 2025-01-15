@@ -5,7 +5,7 @@ import SteamProvider from 'next-auth-steam';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from '../../../lib/prisma';
 
-const authOptions = (req: NextApiRequest): AuthOptions => ({
+export const authOptions = (req: NextApiRequest): AuthOptions => ({
   adapter: PrismaAdapter(prisma),
   providers: [
     SteamProvider(req, {

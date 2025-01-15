@@ -18,7 +18,9 @@ const TwitchSubStatus = () => {
       }
 
       try {
-        const response = await fetch('/api/check-twitch-sub');
+        const response = await fetch('/api/check-twitch-sub', {
+          credentials: 'same-origin',
+        });
 
         if (!response.ok) {
           throw new Error('Failed to check subscription status');
