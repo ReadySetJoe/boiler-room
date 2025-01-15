@@ -12,7 +12,7 @@ import { ConnectTwitch } from '../../components/connect-twitch';
 export default function Bundles() {
   const session = useSession();
 
-  if (!session?.data.user.twitchId) {
+  if (!session?.data?.user.twitchId) {
     return (
       <div className="p-4 bg-gray-100 rounded-lg">
         <p className="text-gray-600">
