@@ -64,4 +64,5 @@ type Query {
   getUserBundles(steamId: String!, sort: BundleSortOptions): [SteamBundle]
   searchSteam(q: String!, bundlesOnly: Boolean): [SteamGame]
   updateUserBundles(steamId: String!): [SteamBundle]
+  updateUserGameBundle(steamId: String!, gameName: String!): SteamBundle
 }

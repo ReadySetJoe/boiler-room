@@ -1,0 +1,5 @@
+query UpdateUserGameBundle($steamId: String!, $gameName: String!) {
+  updateUserGameBundle(steamId: $steamId, gameName: $gameName) {
+    id
+  }
+}

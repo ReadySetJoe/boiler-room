@@ -4,6 +4,7 @@ import {
   getMyBundles,
   getUserBundles,
   updateUserBundles,
+  updateUserGameBundle,
 } from './bundle';
 import { getMyFriends, getSharedGames } from './friend';
 import { getMyLibrary } from './library';
@@ -19,6 +20,7 @@ const resolvers: Resolvers = {
     getUserBundles,
     searchSteam,
     updateUserBundles,
+    updateUserGameBundle,
   },
 };
 

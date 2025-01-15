@@ -1,13 +1,13 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import {
   GetUserBundlesDocument,
-  UpdateUserBundlesDocument,
   BundleSortField,
   SortOrder,
+  GetMyLibraryDocument,
+  UpdateUserGameBundleDocument,
 } from '../../generated/graphql';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { ConnectTwitch } from '../../components/connect-twitch';
 
 export default function Bundles() {
   const session = useSession();
@@ -16,6 +16,9 @@ export default function Bundles() {
     isSubscribed: false,
     error: null,
   });
+  const [totalGames, setTotalGames] = useState(0);
+  const [processedGames, setProcessedGames] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const checkSubscription = async () => {
@@ -25,7 +28,9 @@ export default function Bundles() {
       }
 
       try {
-        const response = await fetch('/api/check-twitch-sub');
+        const response = await fetch('/api/check-twitch-sub', {
+          credentials: 'same-origin',
+        });
 
         if (!response.ok) {
           throw new Error('Failed to check subscription status');
@@ -64,15 +69,40 @@ export default function Bundles() {
       },
     },
   });
-
-  const [updateUserBundles, { loading: updateLoading, error }] = useLazyQuery(
-    UpdateUserBundlesDocument
-  );
+  const [updateUserGameBundle] = useLazyQuery(UpdateUserGameBundleDocument);
+  const [getMyLibrary] = useLazyQuery(GetMyLibraryDocument);
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const [field, order] = event.target.value.split('-');
     setSortField(field as BundleSortField);
     setSortOrder(order as SortOrder);
+  };
+
+  const handleRefreshBundles = async () => {
+    setIsRefreshing(true);
+    setProcessedGames(0);
+
+    const library = await getMyLibrary({
+      variables: { steamId: session?.data?.user.steamId },
+    });
+
+    const games = library.data.getMyLibrary;
+    setTotalGames(games.length);
+
+    await Promise.all(
+      games.map(async game => {
+        await updateUserGameBundle({
+          variables: {
+            steamId: session?.data?.user.steamId,
+            gameName: game.name,
+          },
+        });
+        setProcessedGames(prev => prev + 1);
+      })
+    );
+
+    await refetch();
+    setIsRefreshing(false);
   };
 
   return (
@@ -86,27 +116,24 @@ export default function Bundles() {
         }}
       >
         <button
-          onClick={async () => {
-            await updateUserBundles({
-              variables: { steamId: session?.data?.user.steamId },
-            });
-            await refetch();
-          }}
+          onClick={handleRefreshBundles}
+          disabled={isRefreshing}
           style={{
             padding: '10px',
-            backgroundColor: '#2d3748',
+            backgroundColor: isRefreshing ? '#4a5568' : '#2d3748',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-            cursor: 'pointer',
+            cursor: isRefreshing ? 'not-allowed' : 'pointer',
           }}
         >
-          Refresh Bundles
+          {isRefreshing ? 'Refreshing...' : 'Refresh Bundles'}
         </button>
 
         <select
           onChange={handleSortChange}
           value={`${sortField}-${sortOrder}`}
+          disabled={isRefreshing}
           style={{
             padding: '10px',
             backgroundColor: '#2d3748',
@@ -138,7 +165,33 @@ export default function Bundles() {
         </select>
       </div>
 
-      {updateLoading && <p>Loading...</p>}
+      {isRefreshing && (
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <p>
+            Refreshed {processedGames} out of {totalGames} games...
+          </p>
+          <div
+            style={{
+              width: '100%',
+              height: '4px',
+              backgroundColor: '#2d3748',
+              borderRadius: '2px',
+              overflow: 'hidden',
+              margin: '10px auto',
+              maxWidth: '400px',
+            }}
+          >
+            <div
+              style={{
+                width: `${(processedGames / totalGames) * 100}%`,
+                height: '100%',
+                backgroundColor: '#48bb78',
+                transition: 'width 0.3s ease-in-out',
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {data?.getUserBundles.map(bundle => (
         <a

@@ -279,3 +279,99 @@ export const updateUserBundles: QueryResolvers['updateUserBundles'] = async (
     return [];
   }
 };
+
+export const updateUserGameBundle: QueryResolvers['updateUserGameBundle'] =
+  async (_parent, { steamId, gameName }) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { steamId },
+      });
+      const bundleRes = await axios.get(
+        `https://store.steampowered.com/search/results?term=${gameName}&force_infinite=1&category1=996`
+      );
+
+      const bundleStartIndex = bundleRes.data.indexOf('<!-- List Items -->');
+      const bundleEndIndex = bundleRes.data.indexOf('<!-- End List Items -->');
+      const bundleGamesInfoString = bundleRes.data.substring(
+        bundleStartIndex,
+        bundleEndIndex
+      );
+
+      const bundleDom = new JSDOM(bundleGamesInfoString);
+      // Set a limit of 10 bundles
+      const bundleLinks = bundleDom.window.document.getElementsByTagName('a');
+
+      for (let i = 0; i < Math.min(bundleLinks.length, 10); i++) {
+        const link = bundleLinks[i];
+
+        const bundleId = link.getAttribute('data-ds-bundleid');
+        if (!bundleId) {
+          continue;
+        }
+
+        const url = link.getAttribute('href');
+
+        // check if game is not in bundle
+        const bundlePage = await axios.get(url);
+        const bundleDom = new JSDOM(bundlePage.data);
+        const bundleItemNameElements: Element[] = Array.from(
+          bundleDom.window.document.querySelectorAll('.tab_item_name')
+        );
+        const bundleGameNames = bundleItemNameElements.map(
+          element => element.textContent
+        );
+        if (!bundleGameNames.includes(gameName)) {
+          continue;
+        }
+        const images = link.getElementsByTagName('img');
+        const price = link.querySelector('.discount_final_price')?.textContent;
+        const discount =
+          bundleDom.window.document.querySelector('.bundle_base_discount')
+            ?.textContent || '-0%';
+        const data = {
+          steamId: bundleId,
+          name: link.querySelector('.title').textContent,
+          image: images[0] ? images[0].getAttribute('src') : '',
+          url,
+          price: price || 'Free',
+          priceInCents:
+            parseInt(price?.replace('$', '')?.replace('.', '')) || 0,
+          discount,
+          discountPercent: parseInt(discount.replace('-', '').replace('%', '')),
+        };
+
+        let bundle = await prisma.bundle.findFirst({
+          where: { steamId: bundleId },
+        });
+
+        if (!bundle) {
+          bundle = await prisma.bundle.create({
+            data,
+          });
+        } else {
+          await prisma.bundle.update({
+            where: { steamId: bundleId },
+            data,
+          });
+        }
+
+        const userBundle = await prisma.userBundle.findFirst({
+          where: { userId: user.id, bundleId: bundle.id },
+        });
+
+        if (!userBundle) {
+          await prisma.userBundle.create({
+            data: {
+              userId: user.id,
+              bundleId: bundle.id,
+            },
+          });
+        }
+
+        return bundle;
+      }
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };

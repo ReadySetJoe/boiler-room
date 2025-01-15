@@ -37,6 +37,7 @@ export type Query = {
   getUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
   searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
   updateUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
+  updateUserGameBundle?: Maybe<SteamBundle>;
 };
 
 
@@ -80,6 +81,12 @@ export type QuerySearchSteamArgs = {
 
 
 export type QueryUpdateUserBundlesArgs = {
+  steamId: Scalars['String']['input'];
+};
+
+
+export type QueryUpdateUserGameBundleArgs = {
+  gameName: Scalars['String']['input'];
   steamId: Scalars['String']['input'];
 };
 
@@ -245,6 +252,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getUserBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetUserBundlesArgs, 'steamId'>>;
   searchSteam?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QuerySearchSteamArgs, 'q'>>;
   updateUserBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryUpdateUserBundlesArgs, 'steamId'>>;
+  updateUserGameBundle?: Resolver<Maybe<ResolversTypes['SteamBundle']>, ParentType, ContextType, RequireFields<QueryUpdateUserGameBundleArgs, 'gameName' | 'steamId'>>;
 }>;
 
 export type SharedGameResolvers<ContextType = any, ParentType extends ResolversParentTypes['SharedGame'] = ResolversParentTypes['SharedGame']> = ResolversObject<{
