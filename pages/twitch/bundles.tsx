@@ -6,22 +6,48 @@ import {
   SortOrder,
 } from '../../generated/graphql';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConnectTwitch } from '../../components/connect-twitch';
 
 export default function Bundles() {
   const session = useSession();
+  const [subStatus, setSubStatus] = useState({
+    loading: true,
+    isSubscribed: false,
+    error: null,
+  });
 
-  if (!session?.data?.user.twitchId) {
-    return (
-      <div className="p-4 bg-gray-100 rounded-lg">
-        <p className="text-gray-600">
-          Connect your Twitch account to check subscription status
-        </p>
-        <ConnectTwitch />
-      </div>
-    );
-  }
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (!session?.data?.user.twitchId) {
+        setSubStatus(prev => ({ ...prev, loading: false }));
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/check-twitch-sub');
+
+        if (!response.ok) {
+          throw new Error('Failed to check subscription status');
+        }
+
+        const data = await response.json();
+        setSubStatus({
+          loading: false,
+          isSubscribed: data.isSubscribed,
+          error: null,
+        });
+      } catch (error) {
+        setSubStatus({
+          loading: false,
+          isSubscribed: false,
+          error: 'Failed to check subscription status',
+        });
+      }
+    };
+
+    checkSubscription();
+  }, [session?.data?.user.twitchId]);
 
   const [sortField, setSortField] = useState<BundleSortField>(
     BundleSortField.Name
