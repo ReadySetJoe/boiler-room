@@ -6,53 +6,59 @@ import {
   GetMyLibraryDocument,
   UpdateUserGameBundleDocument,
 } from '../../generated/graphql';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import {
+  // useEffect,
+  useState,
+} from 'react';
+import { Button, Container, Typography } from '@mui/material';
 
 export default function Bundles() {
   const session = useSession();
-  const [subStatus, setSubStatus] = useState({
-    loading: true,
-    isSubscribed: false,
-    error: null,
-  });
+  // const [subStatus, setSubStatus] = useState({
+  //   loading: true,
+  //   isSubscribed: false,
+  //   error: null,
+  // });
   const [totalGames, setTotalGames] = useState(0);
   const [processedGames, setProcessedGames] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  useEffect(() => {
-    const checkSubscription = async () => {
-      if (!session?.data?.user.twitchId) {
-        setSubStatus(prev => ({ ...prev, loading: false }));
-        return;
-      }
+  // TODO: Check Twitch subscription status on this page.
+  // Fine for now, to send direct links to people who are not subscribed.
+  // useEffect(() => {
+  //   const checkSubscription = async () => {
+  //     if (!session?.data?.user.twitchId) {
+  //       setSubStatus(prev => ({ ...prev, loading: false }));
+  //       return;
+  //     }
 
-      try {
-        const response = await fetch('/api/check-twitch-sub', {
-          credentials: 'same-origin',
-        });
+  //     try {
+  //       const response = await fetch('/api/check-twitch-sub', {
+  //         credentials: 'same-origin',
+  //       });
 
-        if (!response.ok) {
-          throw new Error('Failed to check subscription status');
-        }
+  //       if (!response.ok) {
+  //         throw new Error('Failed to check subscription status');
+  //       }
 
-        const data = await response.json();
-        setSubStatus({
-          loading: false,
-          isSubscribed: data.isSubscribed,
-          error: null,
-        });
-      } catch (error) {
-        setSubStatus({
-          loading: false,
-          isSubscribed: false,
-          error: 'Failed to check subscription status',
-        });
-      }
-    };
+  //       const data = await response.json();
+  //       setSubStatus({
+  //         loading: false,
+  //         isSubscribed: data.isSubscribed,
+  //         error: null,
+  //       });
+  //     } catch (error) {
+  //       setSubStatus({
+  //         loading: false,
+  //         isSubscribed: false,
+  //         error: 'Failed to check subscription status',
+  //       });
+  //     }
+  //   };
 
-    checkSubscription();
-  }, [session?.data?.user.twitchId]);
+  //   checkSubscription();
+  // }, [session?.data?.user.twitchId]);
 
   const [sortField, setSortField] = useState<BundleSortField>(
     BundleSortField.Discount
@@ -116,6 +122,22 @@ export default function Bundles() {
     await refetch();
     setIsRefreshing(false);
   };
+
+  if (session.status !== 'authenticated') {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Import Bundles
+        </Typography>
+        <Typography sx={{ my: 3 }}>
+          You need to be logged in to Steam before we can import your library.
+        </Typography>
+        <Button variant="contained" onClick={() => signIn('steam')}>
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
 
   return (
     <div>

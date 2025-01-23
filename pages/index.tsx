@@ -4,14 +4,14 @@ import Link from 'next/link';
 export default function Home() {
   const pages = [
     {
-      name: 'Library',
-      url: '/library',
-      description: 'Use your library to search for bundles',
-    },
-    {
       name: 'Search',
       url: '/search',
       description: 'Search for bundles for any game',
+    },
+    {
+      name: 'Library',
+      url: '/library',
+      description: 'Use your library to search for bundles',
     },
     {
       name: 'Buddies',

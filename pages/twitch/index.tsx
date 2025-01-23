@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { ConnectTwitch } from '../../components/connect-twitch';
 import Link from 'next/link';
+import { Button, Container, Typography } from '@mui/material';
 
 const pages = [
   {
@@ -12,7 +13,8 @@ const pages = [
 ];
 
 const TwitchSubStatus = () => {
-  const { data: session } = useSession();
+  const session = useSession();
+  const sessionData = session.data;
   const [subStatus, setSubStatus] = useState({
     loading: true,
     isSubscribed: false,
@@ -21,7 +23,7 @@ const TwitchSubStatus = () => {
 
   useEffect(() => {
     const checkSubscription = async () => {
-      if (!session?.user.twitchId) {
+      if (!sessionData?.user.twitchId) {
         setSubStatus(prev => ({ ...prev, loading: false }));
         return;
       }
@@ -51,9 +53,26 @@ const TwitchSubStatus = () => {
     };
 
     checkSubscription();
-  }, [session?.user.twitchId]);
+  }, [sessionData?.user.twitchId]);
 
-  if (!session?.user.twitchId) {
+  if (session.status !== 'authenticated') {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Premium
+        </Typography>
+        <Typography sx={{ my: 3 }}>
+          You need to be logged in to Steam first, then we'll check your Twitch
+          subscription.
+        </Typography>
+        <Button variant="contained" onClick={() => signIn('steam')}>
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
+
+  if (!sessionData?.user.twitchId) {
     return (
       <div className="p-4 bg-gray-100 rounded-lg">
         <p className="text-gray-600">
@@ -111,7 +130,6 @@ const TwitchSubStatus = () => {
                     flexDirection: 'column',
                     color: '#FFF',
                     margin: '8px',
-                    height: '200px',
                   }}
                   onMouseEnter={e =>
                     (e.currentTarget.style.backgroundColor = '#2d3748')
@@ -120,8 +138,12 @@ const TwitchSubStatus = () => {
                     (e.currentTarget.style.backgroundColor = 'transparent')
                   }
                 >
-                  <h3>{page.name}</h3>
-                  <p>{page.description}</p>
+                  <Typography variant="h6" style={{ margin: '6px 0px' }}>
+                    {page.name}
+                  </Typography>
+                  <Typography style={{ margin: '6px 0px' }}>
+                    {page.description}
+                  </Typography>
                 </div>
               </Link>
             ))}

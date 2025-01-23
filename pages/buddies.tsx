@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import {
   GetMyFriendsDocument,
@@ -37,6 +37,22 @@ const BuddiesPage = () => {
   const steamId = session?.data?.user.steamId;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
+
+  if (session.status !== 'authenticated') {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Buddies
+        </Typography>
+        <Typography sx={{ my: 3 }}>
+          You need to be logged in to see your friends list.
+        </Typography>
+        <Button variant="contained" onClick={() => signIn('steam')}>
+          Sign in
+        </Button>
+      </Container>
+    );
+  }
 
   const { data, loading } = useQuery(GetMyFriendsDocument, {
     skip: session.status !== 'authenticated',
