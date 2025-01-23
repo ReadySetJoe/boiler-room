@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { ConnectTwitch } from '../../components/connect-twitch';
+import Link from 'next/link';
+
+const pages = [
+  {
+    name: 'Import Bundles',
+    url: '/twitch/bundles',
+    description: 'Import your library to find ALL bundles',
+  },
+];
 
 const TwitchSubStatus = () => {
   const { data: session } = useSession();
@@ -82,9 +91,41 @@ const TwitchSubStatus = () => {
           <span className="text-green-600">
             ✓ You are subscribed to joepowers!
           </span>
-          <a href="/twitch/bundles" className="text-blue-600">
-            View Bundles
-          </a>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '16px',
+              marginTop: '16px',
+            }}
+          >
+            {pages.map(page => (
+              <Link key={page.url} href={page.url}>
+                <div
+                  style={{
+                    padding: '16px',
+                    border: '1px solid #FFF',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    color: '#FFF',
+                    margin: '8px',
+                    height: '200px',
+                  }}
+                  onMouseEnter={e =>
+                    (e.currentTarget.style.backgroundColor = '#2d3748')
+                  }
+                  onMouseLeave={e =>
+                    (e.currentTarget.style.backgroundColor = 'transparent')
+                  }
+                >
+                  <h3>{page.name}</h3>
+                  <p>{page.description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="space-y-2">

@@ -55,9 +55,9 @@ export default function Bundles() {
   }, [session?.data?.user.twitchId]);
 
   const [sortField, setSortField] = useState<BundleSortField>(
-    BundleSortField.Name
+    BundleSortField.Discount
   );
-  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Asc);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Desc);
 
   const { data, refetch, loading } = useQuery(GetUserBundlesDocument, {
     skip: session.status !== 'authenticated',
@@ -168,11 +168,11 @@ export default function Bundles() {
           <option value={`${BundleSortField.Price}-${SortOrder.Desc}`}>
             Price (High to Low)
           </option>
-          <option value={`${BundleSortField.Discount}-${SortOrder.Asc}`}>
-            Discount (Low to High)
-          </option>
           <option value={`${BundleSortField.Discount}-${SortOrder.Desc}`}>
             Discount (High to Low)
+          </option>
+          <option value={`${BundleSortField.Discount}-${SortOrder.Asc}`}>
+            Discount (Low to High)
           </option>
         </select>
       </div>
