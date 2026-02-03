@@ -1,6 +1,5 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 
 import {
   Avatar,
@@ -15,9 +14,9 @@ import {
 import { PROVIDER_ID } from 'next-auth-steam';
 
 export default function Login() {
-  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  const handleOpenUserMenu = event => {
+  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
   const handleCloseUserMenu = () => {
@@ -36,26 +35,43 @@ export default function Login() {
   const { data: session } = useSession();
 
   if (!session) {
-    return <Button onClick={() => signIn(PROVIDER_ID)}>Sign in</Button>;
+    return (
+      <Button onClick={() => signIn(PROVIDER_ID)} aria-label="Sign in with Steam">
+        Sign in
+      </Button>
+    );
   }
 
-  const avatar = session?.user?.image ? (
-    <img
-      src={session.user.image}
-      height={50}
-      width={50}
-      style={{ borderRadius: '100%' }}
+  const userName = session.user?.name ?? 'User';
+  const userImage = session.user?.image;
+
+  const avatar = userImage ? (
+    <Avatar
+      src={userImage}
+      alt={`${userName}'s avatar`}
+      sx={{ width: 50, height: 50 }}
     />
   ) : (
-    <Avatar sx={{ width: 50, height: 50 }}>{session.user.name[0]}</Avatar>
+    <Avatar sx={{ width: 50, height: 50 }} aria-label={`${userName}'s avatar`}>
+      {userName[0]}
+    </Avatar>
   );
 
   return (
     <Box>
-      <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu}>{avatar}</IconButton>
+      <Tooltip title="Open user menu">
+        <IconButton
+          onClick={handleOpenUserMenu}
+          aria-label="Open user menu"
+          aria-controls={anchorElUser ? 'user-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={anchorElUser ? 'true' : undefined}
+        >
+          {avatar}
+        </IconButton>
       </Tooltip>
       <Menu
+        id="user-menu"
         sx={{ mt: '45px' }}
         anchorEl={anchorElUser}
         anchorOrigin={{
@@ -71,7 +87,13 @@ export default function Login() {
         onClose={handleCloseUserMenu}
       >
         {settings.map(setting => (
-          <MenuItem key={setting.label} onClick={setting.onClick}>
+          <MenuItem
+            key={setting.label}
+            onClick={() => {
+              setting.onClick();
+              handleCloseUserMenu();
+            }}
+          >
             <Typography textAlign="center">{setting.label}</Typography>
           </MenuItem>
         ))}

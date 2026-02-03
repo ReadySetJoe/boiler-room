@@ -7,58 +7,75 @@ import {
   UpdateUserGameBundleDocument,
 } from '../../generated/graphql';
 import { signIn, useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import {
-  // useEffect,
-  useState,
-} from 'react';
-import { Button, Container, Typography } from '@mui/material';
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Container,
+  FormControl,
+  Grid,
+  LinearProgress,
+  MenuItem,
+  Select,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { ConnectTwitch } from '../../components/connect-twitch';
 
 export default function Bundles() {
   const session = useSession();
-  // const [subStatus, setSubStatus] = useState({
-  //   loading: true,
-  //   isSubscribed: false,
-  //   error: null,
-  // });
+  const [subStatus, setSubStatus] = useState<{
+    loading: boolean;
+    isSubscribed: boolean;
+    error: string | null;
+  }>({
+    loading: true,
+    isSubscribed: false,
+    error: null,
+  });
   const [totalGames, setTotalGames] = useState(0);
   const [processedGames, setProcessedGames] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // TODO: Check Twitch subscription status on this page.
-  // Fine for now, to send direct links to people who are not subscribed.
-  // useEffect(() => {
-  //   const checkSubscription = async () => {
-  //     if (!session?.data?.user.twitchId) {
-  //       setSubStatus(prev => ({ ...prev, loading: false }));
-  //       return;
-  //     }
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (!session?.data?.user.twitchId) {
+        setSubStatus(prev => ({ ...prev, loading: false }));
+        return;
+      }
 
-  //     try {
-  //       const response = await fetch('/api/check-twitch-sub', {
-  //         credentials: 'same-origin',
-  //       });
+      try {
+        const response = await fetch('/api/check-twitch-sub', {
+          credentials: 'same-origin',
+        });
 
-  //       if (!response.ok) {
-  //         throw new Error('Failed to check subscription status');
-  //       }
+        if (!response.ok) {
+          throw new Error('Failed to check subscription status');
+        }
 
-  //       const data = await response.json();
-  //       setSubStatus({
-  //         loading: false,
-  //         isSubscribed: data.isSubscribed,
-  //         error: null,
-  //       });
-  //     } catch (error) {
-  //       setSubStatus({
-  //         loading: false,
-  //         isSubscribed: false,
-  //         error: 'Failed to check subscription status',
-  //       });
-  //     }
-  //   };
+        const data = await response.json();
+        setSubStatus({
+          loading: false,
+          isSubscribed: data.isSubscribed,
+          error: null,
+        });
+      } catch (error) {
+        setSubStatus({
+          loading: false,
+          isSubscribed: false,
+          error: 'Failed to check subscription status',
+        });
+      }
+    };
 
-  //   checkSubscription();
-  // }, [session?.data?.user.twitchId]);
+    checkSubscription();
+  }, [session?.data?.user.twitchId]);
 
   const [sortField, setSortField] = useState<BundleSortField>(
     BundleSortField.Discount
@@ -66,7 +83,7 @@ export default function Bundles() {
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Desc);
 
   const { data, refetch, loading } = useQuery(GetUserBundlesDocument, {
-    skip: session.status !== 'authenticated',
+    skip: session.status !== 'authenticated' || !subStatus.isSubscribed,
     variables: {
       steamId: session?.data?.user.steamId,
       sort: {
@@ -78,7 +95,7 @@ export default function Bundles() {
   const [updateUserGameBundle] = useLazyQuery(UpdateUserGameBundleDocument);
   const [getMyLibrary] = useLazyQuery(GetMyLibraryDocument);
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (event: { target: { value: string } }) => {
     const [field, order] = event.target.value.split('-');
     setSortField(field as BundleSortField);
     setSortOrder(order as SortOrder);
@@ -139,134 +156,185 @@ export default function Bundles() {
     );
   }
 
+  // Check if Twitch is connected
+  if (!session?.data?.user.twitchId) {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Import Bundles
+        </Typography>
+        <Typography sx={{ my: 3 }}>
+          Connect your Twitch account to access this premium feature.
+        </Typography>
+        <ConnectTwitch />
+      </Container>
+    );
+  }
+
+  // Check subscription status
+  if (subStatus.loading) {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Import Bundles
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <CircularProgress size={20} />
+          <Typography>Checking subscription status...</Typography>
+        </Box>
+      </Container>
+    );
+  }
+
+  if (subStatus.error) {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Import Bundles
+        </Typography>
+        <Alert severity="error">{subStatus.error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!subStatus.isSubscribed) {
+    return (
+      <Container>
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Import Bundles
+        </Typography>
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          This is a premium feature for Twitch subscribers only.
+        </Alert>
+        <Typography sx={{ mb: 2 }}>
+          Subscribe to joepowers on Twitch to unlock the full library import
+          feature.
+        </Typography>
+        <Button
+          href="https://twitch.tv/joepowers"
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="contained"
+          sx={{
+            bgcolor: '#9146FF',
+            '&:hover': { bgcolor: '#772CE8' },
+          }}
+        >
+          Subscribe Now
+        </Button>
+      </Container>
+    );
+  }
+
   return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '20px',
-        }}
+    <Container component="main">
+      <Typography variant="h4" sx={{ my: 3 }}>
+        Import Bundles
+      </Typography>
+
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        sx={{ mb: 3 }}
+        alignItems="center"
+        justifyContent="center"
       >
-        <button
+        <Button
           onClick={handleRefreshBundles}
           disabled={isRefreshing}
-          style={{
-            padding: '10px',
-            backgroundColor: isRefreshing ? '#4a5568' : '#2d3748',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: isRefreshing ? 'not-allowed' : 'pointer',
-          }}
+          variant="contained"
+          aria-label="Refresh bundles from Steam"
         >
           {isRefreshing ? 'Refreshing...' : 'Refresh Bundles'}
-        </button>
+        </Button>
 
-        <select
-          onChange={handleSortChange}
-          value={`${sortField}-${sortOrder}`}
-          disabled={isRefreshing}
-          style={{
-            padding: '10px',
-            backgroundColor: '#2d3748',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            marginLeft: '10px',
-          }}
-        >
-          <option value={`${BundleSortField.Name}-${SortOrder.Asc}`}>
-            Name (A-Z)
-          </option>
-          <option value={`${BundleSortField.Name}-${SortOrder.Desc}`}>
-            Name (Z-A)
-          </option>
-          <option value={`${BundleSortField.Price}-${SortOrder.Asc}`}>
-            Price (Low to High)
-          </option>
-          <option value={`${BundleSortField.Price}-${SortOrder.Desc}`}>
-            Price (High to Low)
-          </option>
-          <option value={`${BundleSortField.Discount}-${SortOrder.Desc}`}>
-            Discount (High to Low)
-          </option>
-          <option value={`${BundleSortField.Discount}-${SortOrder.Asc}`}>
-            Discount (Low to High)
-          </option>
-        </select>
-      </div>
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <Select
+            onChange={handleSortChange}
+            value={`${sortField}-${sortOrder}`}
+            disabled={isRefreshing}
+            aria-label="Sort bundles"
+          >
+            <MenuItem value={`${BundleSortField.Name}-${SortOrder.Asc}`}>
+              Name (A-Z)
+            </MenuItem>
+            <MenuItem value={`${BundleSortField.Name}-${SortOrder.Desc}`}>
+              Name (Z-A)
+            </MenuItem>
+            <MenuItem value={`${BundleSortField.Price}-${SortOrder.Asc}`}>
+              Price (Low to High)
+            </MenuItem>
+            <MenuItem value={`${BundleSortField.Price}-${SortOrder.Desc}`}>
+              Price (High to Low)
+            </MenuItem>
+            <MenuItem value={`${BundleSortField.Discount}-${SortOrder.Desc}`}>
+              Discount (High to Low)
+            </MenuItem>
+            <MenuItem value={`${BundleSortField.Discount}-${SortOrder.Asc}`}>
+              Discount (Low to High)
+            </MenuItem>
+          </Select>
+        </FormControl>
+      </Stack>
 
       {isRefreshing && (
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <p>
+        <Box sx={{ textAlign: 'center', mb: 3 }}>
+          <Typography sx={{ mb: 1 }}>
             Refreshed {processedGames} out of {totalGames} games...
-          </p>
-          <div
-            style={{
-              width: '100%',
-              height: '4px',
-              backgroundColor: '#2d3748',
-              borderRadius: '2px',
-              overflow: 'hidden',
-              margin: '10px auto',
-              maxWidth: '400px',
-            }}
-          >
-            <div
-              style={{
-                width: `${(processedGames / totalGames) * 100}%`,
-                height: '100%',
-                backgroundColor: '#48bb78',
-                transition: 'width 0.3s ease-in-out',
-              }}
-            />
-          </div>
-        </div>
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={totalGames > 0 ? (processedGames / totalGames) * 100 : 0}
+            sx={{ maxWidth: 400, mx: 'auto' }}
+          />
+        </Box>
       )}
 
-      {loading && !isRefreshing && <p>Loading bundles...</p>}
+      {loading && !isRefreshing && (
+        <Stack spacing={2}>
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} variant="rectangular" height={100} />
+          ))}
+        </Stack>
+      )}
 
-      {!isRefreshing &&
-        data?.getUserBundles.map(bundle => (
-          <a
-            key={bundle.id}
-            style={{
-              border: '1px solid white',
-              margin: '10px',
-              padding: '10px',
-              display: 'flex',
-              transition: 'background-color 0.3s',
-              borderRadius: '5px',
-            }}
-            href={bundle.url}
-            target="_blank"
-            rel="noreferrer"
-            onMouseEnter={e =>
-              (e.currentTarget.style.backgroundColor = '#2d3748')
-            }
-            onMouseLeave={e =>
-              (e.currentTarget.style.backgroundColor = 'transparent')
-            }
-          >
-            <img
-              src={bundle.image}
-              alt={bundle.name}
-              style={{
-                objectFit: 'contain',
-                marginRight: '10px',
-                width: '128px',
-              }}
-            />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontWeight: '500' }}>{bundle.name}</div>
-              <div style={{ color: '#a0aec0' }}>{bundle.price}</div>
-              <div style={{ color: '#48bb78' }}>{bundle.discount}</div>
-            </div>
-          </a>
-        ))}
-    </div>
+      <Grid container spacing={2}>
+        {!isRefreshing &&
+          data?.getUserBundles.map(bundle => (
+            <Grid item xs={12} key={bundle.id}>
+              <Card
+                component="a"
+                href={bundle.url}
+                target="_blank"
+                rel="noreferrer"
+                sx={{
+                  display: 'flex',
+                  textDecoration: 'none',
+                  transition: 'background-color 0.2s',
+                  '&:hover': { bgcolor: 'action.hover' },
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  sx={{ width: 128, objectFit: 'contain' }}
+                  image={bundle.image}
+                  alt={bundle.name}
+                />
+                <CardContent>
+                  <Typography variant="subtitle1" fontWeight={500}>
+                    {bundle.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {bundle.price}
+                  </Typography>
+                  <Typography variant="body2" color="success.main">
+                    {bundle.discount}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+      </Grid>
+    </Container>
   );
 }

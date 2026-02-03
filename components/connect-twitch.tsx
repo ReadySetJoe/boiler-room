@@ -1,51 +1,77 @@
 import { useSession, signIn } from 'next-auth/react';
 import { useState } from 'react';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
 export function ConnectTwitch() {
   const { data: session, update: updateSession } = useSession();
   const [isLinking, setIsLinking] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   const handleConnect = async () => {
     setIsLinking(true);
     try {
       await signIn('twitch');
       await updateSession();
-    } catch (error) {
-      console.error('Error linking Twitch account:', error);
     } finally {
       setIsLinking(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    setIsDisconnecting(true);
+    try {
+      const response = await fetch('/api/disconnect-twitch', { method: 'POST' });
+      if (response.ok) {
+        await updateSession();
+      }
+    } finally {
+      setIsDisconnecting(false);
     }
   };
 
   const isTwitchConnected = !!session?.user.twitchId;
 
   return (
-    <div className="p-4 border rounded-lg">
-      <h3 className="text-lg font-semibold mb-2">Twitch Connection</h3>
+    <Box
+      sx={{
+        p: 2,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 1 }}>
+        Twitch Connection
+      </Typography>
       {isTwitchConnected ? (
-        <div className="flex items-center space-x-2">
-          <span className="text-green-600">✓ Connected to Twitch</span>
-          <button
-            onClick={async () => {
-              // Implement disconnect logic here
-              // You'll need to create an API route to handle this
-              await fetch('/api/disconnect-twitch', { method: 'POST' });
-              await updateSession();
-            }}
-            className="text-red-600 text-sm hover:underline"
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography sx={{ color: 'success.main' }}>
+            Connected to Twitch
+          </Typography>
+          <Button
+            onClick={handleDisconnect}
+            disabled={isDisconnecting}
+            color="error"
+            size="small"
+            aria-label="Disconnect Twitch account"
           >
-            Disconnect
-          </button>
-        </div>
+            {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
+          </Button>
+        </Stack>
       ) : (
-        <button
+        <Button
           onClick={handleConnect}
           disabled={isLinking}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+          variant="contained"
+          sx={{
+            bgcolor: '#9146FF',
+            '&:hover': { bgcolor: '#772CE8' },
+          }}
+          aria-label="Connect Twitch account"
         >
           {isLinking ? 'Connecting...' : 'Connect Twitch Account'}
-        </button>
+        </Button>
       )}
-    </div>
+    </Box>
   );
 }

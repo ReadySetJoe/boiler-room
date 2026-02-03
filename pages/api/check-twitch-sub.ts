@@ -78,7 +78,6 @@ export default async function handler(req, res) {
 
     res.json({ isSubscribed });
   } catch (error) {
-    console.error('Error checking subscription:', error);
     res.status(500).json({ error: 'Failed to check subscription status' });
   }
 }

@@ -78,47 +78,49 @@ export const authOptions = (req: NextApiRequest): AuthOptions => ({
           });
           return true;
         } catch (error) {
-          console.error('Error in Steam sign in:', error);
           return false;
         }
       }
 
       if (account.provider === 'twitch') {
         try {
-          const currentUser = await prisma.session.findFirst({
+          // Get the session token from cookies to find the CURRENT user's session
+          const sessionToken =
+            req.cookies['next-auth.session-token'] ||
+            req.cookies['__Secure-next-auth.session-token'];
+
+          if (!sessionToken) {
+            return false;
+          }
+
+          const currentSession = await prisma.session.findUnique({
             where: {
-              // Look for active sessions
-              expires: { gt: new Date() },
+              sessionToken: sessionToken,
             },
             include: {
               user: {
                 include: { accounts: true },
               },
             },
-            orderBy: {
-              expires: 'desc',
-            },
           });
 
-          if (!currentUser?.user?.steamId) {
-            console.log('No Steam account found, redirecting to sign in');
+          if (!currentSession?.user?.steamId) {
             return false;
           }
 
           // Check if Twitch is already linked
-          const hasTwitch = currentUser.user.accounts.some(
+          const hasTwitch = currentSession.user.accounts.some(
             acc => acc.provider === 'twitch'
           );
 
           if (hasTwitch) {
-            console.log('Twitch already linked');
             return true;
           }
 
           // Link Twitch to existing Steam account
           await prisma.account.create({
             data: {
-              userId: currentUser.user.id,
+              userId: currentSession.user.id,
               type: account.type,
               provider: account.provider,
               providerAccountId: account.providerAccountId,
@@ -131,13 +133,12 @@ export const authOptions = (req: NextApiRequest): AuthOptions => ({
           });
 
           await prisma.user.update({
-            where: { id: currentUser.user.id },
+            where: { id: currentSession.user.id },
             data: { twitchId: account.providerAccountId },
           });
 
           return true;
         } catch (error) {
-          console.error('Error in Twitch connection:', error);
           return false;
         }
       }

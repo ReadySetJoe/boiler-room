@@ -1,9 +1,13 @@
 import { useQuery } from '@apollo/client';
 import {
+  Avatar,
   Button,
   Container,
+  FormControl,
+  Grid,
   MenuItem,
   Select,
+  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -77,59 +81,94 @@ const Library = () => {
 
   let games = data?.getMyLibrary;
 
-  if (search) {
+  if (search && games) {
     games = games.filter(game =>
       game.name.toLowerCase().includes(search.toLowerCase())
     );
   }
 
   return (
-    <Container>
+    <Container component="section">
       <Typography variant="h4" sx={{ mb: 3 }}>
         Library
       </Typography>
       <Stack spacing={2}>
-        <Stack spacing={1} sx={{ pb: 2 }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={2}
+          sx={{ pb: 2 }}
+        >
           <TextField
             label="Search"
             value={search}
             onChange={e => setSearch(e.target.value)}
+            fullWidth
+            sx={{ maxWidth: { sm: 300 } }}
+            aria-label="Search games in library"
           />
-          <Select
-            value={sortOption.label}
-            onChange={e => {
-              const selectedOption = sortOptions.find(
-                option => option.label === e.target.value
-              );
-              setSortOption(selectedOption);
-            }}
-          >
-            {sortOptions.map(option => (
-              <MenuItem key={option.label} value={option.label}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
+          <FormControl sx={{ minWidth: { xs: '100%', sm: 220 } }}>
+            <Select
+              value={sortOption.label}
+              onChange={e => {
+                const selectedOption = sortOptions.find(
+                  option => option.label === e.target.value
+                );
+                if (selectedOption) {
+                  setSortOption(selectedOption);
+                }
+              }}
+              aria-label="Sort games"
+            >
+              {sortOptions.map(option => (
+                <MenuItem key={option.label} value={option.label}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Stack>
         {loading ? (
-          <Typography>Loading your library...</Typography>
+          <Grid container spacing={1}>
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <Grid item xs={12} sm={6} md={4} key={i}>
+                <Skeleton variant="rectangular" height={50} />
+              </Grid>
+            ))}
+          </Grid>
         ) : (
-          games?.map(game => (
-            <Button
-              href={`/bundles/${game.name}`}
-              sx={{ width: 'fit-content' }}
-            >
-              <Stack
-                key={game.id}
-                direction="row"
-                alignItems="center"
-                spacing={2}
-              >
-                <img src={game.image} alt={game.name} width={30} height={30} />
-                <Typography variant="h6">{game.name}</Typography>
-              </Stack>
-            </Button>
-          ))
+          <Grid container spacing={1}>
+            {games?.map(game => (
+              <Grid item xs={12} sm={6} md={4} key={game.id}>
+                <Button
+                  href={`/bundles/${encodeURIComponent(game.name)}`}
+                  sx={{
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    textTransform: 'none',
+                  }}
+                >
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <Avatar
+                      src={game.image}
+                      alt={game.name}
+                      sx={{ width: 30, height: 30 }}
+                      variant="rounded"
+                    />
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {game.name}
+                    </Typography>
+                  </Stack>
+                </Button>
+              </Grid>
+            ))}
+          </Grid>
         )}
       </Stack>
     </Container>

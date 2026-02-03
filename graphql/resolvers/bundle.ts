@@ -8,6 +8,19 @@ import {
 import { QueryResolvers } from '../../generated/resolvers-types';
 import prisma from '../../lib/prisma';
 
+// Validate Steam ID format (17-digit numeric string)
+const isValidSteamId = (steamId: string): boolean => {
+  return /^\d{17}$/.test(steamId);
+};
+
+// Sanitize game name for URL usage - remove potentially dangerous characters
+const sanitizeGameName = (name: string): string => {
+  return name
+    .replace(/[<>'"&]/g, '')
+    .trim()
+    .substring(0, 200); // Limit length
+};
+
 const searchBundlesByGameNames = async (gameNames: string[]) => {
   const bundles = [] as SteamBundle[];
   for (let i = 0; i < gameNames.length; i++) {
@@ -64,13 +77,20 @@ const searchBundlesByGameNames = async (gameNames: string[]) => {
 
 export const getBundlesByGameName: QueryResolvers['getBundlesByGameName'] =
   async (_parent, { name }) => {
-    return searchBundlesByGameNames([name]);
+    if (!name || name.trim().length === 0) {
+      return [];
+    }
+    return searchBundlesByGameNames([sanitizeGameName(name)]);
   };
 
 export const getMyBundles: QueryResolvers['getMyBundles'] = async (
   _parent,
   { steamId }
 ) => {
+  if (!isValidSteamId(steamId)) {
+    return [];
+  }
+
   const res = await axios.get(
     `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${process.env.STEAM_API_KEY}&steamid=${steamId}&include_appinfo=true&format=json`
   );
@@ -83,6 +103,10 @@ export const getUserBundles: QueryResolvers['getUserBundles'] = async (
   _parent,
   { steamId, sort }
 ) => {
+  if (!isValidSteamId(steamId)) {
+    return [];
+  }
+
   const user = await prisma.user.findUnique({
     where: { steamId },
     include: {
@@ -130,6 +154,10 @@ export const updateUserBundles: QueryResolvers['updateUserBundles'] = async (
   _parent,
   { steamId }
 ) => {
+  if (!isValidSteamId(steamId)) {
+    return [];
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { steamId },
@@ -148,7 +176,6 @@ export const updateUserBundles: QueryResolvers['updateUserBundles'] = async (
 
     const userBundles = [];
     for (const game of games) {
-      console.log('Searching for', game.name);
       const res = await axios.get(
         `https://store.steampowered.com/search/results?term=${game.name}&force_infinite=1`
       );
@@ -275,19 +302,24 @@ export const updateUserBundles: QueryResolvers['updateUserBundles'] = async (
 
     return userBundles;
   } catch (error) {
-    console.error(error);
     return [];
   }
 };
 
 export const updateUserGameBundle: QueryResolvers['updateUserGameBundle'] =
   async (_parent, { steamId, gameName }) => {
+    if (!isValidSteamId(steamId) || !gameName || gameName.trim().length === 0) {
+      return null;
+    }
+
+    const sanitizedGameName = sanitizeGameName(gameName);
+
     try {
       const user = await prisma.user.findUnique({
         where: { steamId },
       });
       const bundleRes = await axios.get(
-        `https://store.steampowered.com/search/results?term=${gameName}&force_infinite=1&category1=996`
+        `https://store.steampowered.com/search/results?term=${encodeURIComponent(sanitizedGameName)}&force_infinite=1&category1=996`
       );
 
       const bundleStartIndex = bundleRes.data.indexOf('<!-- List Items -->');
@@ -320,7 +352,7 @@ export const updateUserGameBundle: QueryResolvers['updateUserGameBundle'] =
         const bundleGameNames = bundleItemNameElements.map(
           element => element.textContent
         );
-        if (!bundleGameNames.includes(gameName)) {
+        if (!bundleGameNames.includes(sanitizedGameName)) {
           continue;
         }
         const images = link.getElementsByTagName('img');
@@ -371,7 +403,6 @@ export const updateUserGameBundle: QueryResolvers['updateUserGameBundle'] =
         return bundle;
       }
     } catch (error) {
-      console.error(error);
       return null;
     }
   };

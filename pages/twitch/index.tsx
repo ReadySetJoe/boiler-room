@@ -2,7 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { ConnectTwitch } from '../../components/connect-twitch';
 import Link from 'next/link';
-import { Button, Container, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from '@mui/material';
 
 const pages = [
   {
@@ -15,7 +25,11 @@ const pages = [
 const TwitchSubStatus = () => {
   const session = useSession();
   const sessionData = session.data;
-  const [subStatus, setSubStatus] = useState({
+  const [subStatus, setSubStatus] = useState<{
+    loading: boolean;
+    isSubscribed: boolean;
+    error: string | null;
+  }>({
     loading: true,
     isSubscribed: false,
     error: null,
@@ -74,97 +88,99 @@ const TwitchSubStatus = () => {
 
   if (!sessionData?.user.twitchId) {
     return (
-      <div className="p-4 bg-gray-100 rounded-lg">
-        <p className="text-gray-600">
+      <Box sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+        <Typography sx={{ color: 'text.secondary', mb: 2 }}>
           Connect your Twitch account to check subscription status
-        </p>
+        </Typography>
         <ConnectTwitch />
-      </div>
+      </Box>
     );
   }
 
   if (subStatus.loading) {
     return (
-      <div className="p-4 bg-gray-100 rounded-lg">
-        <p className="text-gray-600">Checking subscription status...</p>
-      </div>
+      <Box
+        sx={{
+          p: 2,
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+        }}
+      >
+        <CircularProgress size={20} />
+        <Typography sx={{ color: 'text.secondary' }}>
+          Checking subscription status...
+        </Typography>
+      </Box>
     );
   }
 
   if (subStatus.error) {
     return (
-      <div className="p-4 bg-red-100 rounded-lg">
-        <p className="text-red-600">{subStatus.error}</p>
-      </div>
+      <Alert severity="error" sx={{ borderRadius: 2 }}>
+        {subStatus.error}
+      </Alert>
     );
   }
 
   return (
-    <div
-      className={`p-4 ${
-        subStatus.isSubscribed ? 'bg-green-100' : 'bg-yellow-100'
-      } rounded-lg`}
+    <Box
+      sx={{
+        p: 2,
+        bgcolor: subStatus.isSubscribed ? 'success.dark' : 'warning.dark',
+        borderRadius: 2,
+      }}
     >
       {subStatus.isSubscribed ? (
-        <div className="flex items-center space-x-2">
-          <span className="text-green-600">
-            ✓ You are subscribed to joepowers!
-          </span>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-              marginTop: '16px',
-            }}
-          >
+        <Box>
+          <Typography sx={{ color: 'success.contrastText', mb: 2 }}>
+            You are subscribed to joepowers!
+          </Typography>
+          <Grid container spacing={2}>
             {pages.map(page => (
-              <Link key={page.url} href={page.url}>
-                <div
-                  style={{
-                    padding: '16px',
-                    border: '1px solid #FFF',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    color: '#FFF',
-                    margin: '8px',
-                  }}
-                  onMouseEnter={e =>
-                    (e.currentTarget.style.backgroundColor = '#2d3748')
-                  }
-                  onMouseLeave={e =>
-                    (e.currentTarget.style.backgroundColor = 'transparent')
-                  }
-                >
-                  <Typography variant="h6" style={{ margin: '6px 0px' }}>
-                    {page.name}
-                  </Typography>
-                  <Typography style={{ margin: '6px 0px' }}>
-                    {page.description}
-                  </Typography>
-                </div>
-              </Link>
+              <Grid item xs={12} sm={6} key={page.url}>
+                <Link href={page.url} style={{ textDecoration: 'none' }}>
+                  <Card
+                    sx={{
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s',
+                      '&:hover': { bgcolor: 'action.hover' },
+                    }}
+                  >
+                    <CardContent>
+                      <Typography variant="h6">{page.name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {page.description}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </Grid>
             ))}
-          </div>
-        </div>
+          </Grid>
+        </Box>
       ) : (
-        <div className="space-y-2">
-          <p className="text-yellow-800">
+        <Box>
+          <Typography sx={{ color: 'warning.contrastText', mb: 2 }}>
             You are not currently subscribed to joepowers
-          </p>
-          <a
+          </Typography>
+          <Button
             href="https://twitch.tv/joepowers"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+            variant="contained"
+            sx={{
+              bgcolor: '#9146FF',
+              '&:hover': { bgcolor: '#772CE8' },
+            }}
           >
             Subscribe Now
-          </a>
-        </div>
+          </Button>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

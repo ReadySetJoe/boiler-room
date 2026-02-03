@@ -3,22 +3,30 @@ import {
   Avatar,
   Box,
   Button,
-  Checkbox,
   CircularProgress,
   Container,
   Stack,
   Typography,
 } from '@mui/material';
 import { signIn, useSession } from 'next-auth/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   GetMyFriendsDocument,
   GetSharedGamesDocument,
+  GetSharedGamesQuery,
 } from '../generated/graphql';
 
-const groupSharedGamesByNumberOfOwners = (sharedGames: any) => {
-  const grouped = sharedGames.reduce((acc: any, game: any) => {
-    const numOwners = game.friends.length;
+type SharedGameItem = NonNullable<
+  NonNullable<GetSharedGamesQuery['getSharedGames']>[number]
+>;
+
+type GroupedSharedGames = Record<number, SharedGameItem[]>;
+
+const groupSharedGamesByNumberOfOwners = (
+  sharedGames: SharedGameItem[]
+): GroupedSharedGames => {
+  return sharedGames.reduce<GroupedSharedGames>((acc, game) => {
+    const numOwners = game.friends?.length ?? 0;
 
     if (!acc[numOwners]) {
       acc[numOwners] = [];
@@ -28,8 +36,6 @@ const groupSharedGamesByNumberOfOwners = (sharedGames: any) => {
 
     return acc;
   }, {});
-
-  return grouped;
 };
 
 const BuddiesPage = () => {
@@ -37,6 +43,31 @@ const BuddiesPage = () => {
   const steamId = session?.data?.user.steamId;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
+
+  const { data, loading } = useQuery(GetMyFriendsDocument, {
+    skip: session.status !== 'authenticated',
+    variables: {
+      steamId,
+    },
+  });
+  const friends = data?.getMyFriends ?? [];
+
+  const [
+    getSharedGames,
+    { data: sharedGamesData, loading: sharedGamesLoading },
+  ] = useLazyQuery(GetSharedGamesDocument);
+  const sharedGames = (sharedGamesData?.getSharedGames ?? []).filter(
+    (game): game is SharedGameItem => game !== null
+  );
+
+  const onClick = async () => {
+    getSharedGames({
+      variables: {
+        steamIds: [...selectedIds, steamId],
+      },
+    });
+    setShowResults(true);
+  };
 
   if (session.status !== 'authenticated') {
     return (
@@ -54,31 +85,8 @@ const BuddiesPage = () => {
     );
   }
 
-  const { data, loading } = useQuery(GetMyFriendsDocument, {
-    skip: session.status !== 'authenticated',
-    variables: {
-      steamId,
-    },
-  });
-  const friends = data?.getMyFriends ?? [];
-
-  const [
-    getSharedGames,
-    { data: sharedGamesData, loading: sharedGamesLoading },
-  ] = useLazyQuery(GetSharedGamesDocument);
-  const sharedGames = sharedGamesData?.getSharedGames ?? [];
-
-  const onClick = async () => {
-    getSharedGames({
-      variables: {
-        steamIds: [...selectedIds, steamId],
-      },
-    });
-    setShowResults(true);
-  };
-
   return (
-    <Container>
+    <Container component="section">
       <Typography variant="h4" sx={{ mb: 3 }}>
         Where we droppin?
       </Typography>
@@ -86,7 +94,7 @@ const BuddiesPage = () => {
         This should help you find which games you and your friends have in
         common.
       </Typography>
-      {loading && <CircularProgress />}
+      {loading && <CircularProgress aria-label="Loading friends" />}
       <Box
         sx={{
           display: 'flex',
@@ -97,6 +105,7 @@ const BuddiesPage = () => {
       >
         {friends.map(f => (
           <Button
+            key={f.id}
             onClick={() => {
               setShowResults(false);
               selectedIds.includes(f.id)
@@ -105,8 +114,9 @@ const BuddiesPage = () => {
             }}
             variant={selectedIds.includes(f.id) ? 'contained' : 'outlined'}
             sx={{ m: 1, p: 1 }}
+            aria-pressed={selectedIds.includes(f.id)}
           >
-            <Avatar src={f.avatar} sx={{ mr: 1 }} />
+            <Avatar src={f.avatar} sx={{ mr: 1 }} alt={`${f.name}'s avatar`} />
             {f.name}
           </Button>
         ))}
@@ -131,14 +141,16 @@ const BuddiesPage = () => {
           Clear all
         </Button>
       </Stack>
-      {sharedGamesLoading && <CircularProgress />}
+      {sharedGamesLoading && (
+        <CircularProgress aria-label="Loading shared games" />
+      )}
       {sharedGames.length > 0 && !sharedGamesLoading && showResults && (
         <Box>
           {Object.entries(groupSharedGamesByNumberOfOwners(sharedGames))
             .sort(([a], [b]) => Number(b) - Number(a))
             .filter(([numOwners]) => Number(numOwners) > 1)
-            .map(([numOwners, sharedGames]: any) => (
-              <>
+            .map(([numOwners, groupedGames]) => (
+              <React.Fragment key={numOwners}>
                 {Number(numOwners) === selectedIds.length + 1 ? (
                   <Typography variant="h6">All of you own:</Typography>
                 ) : (
@@ -147,38 +159,41 @@ const BuddiesPage = () => {
                   </Typography>
                 )}
                 <Box
-                  key={numOwners}
                   sx={{
                     alignItems: 'center',
                   }}
                 >
-                  {sharedGames
-                    .sort((a: any, b: any) =>
-                      a.game.name.localeCompare(b.game.name)
+                  {groupedGames
+                    .sort((a, b) =>
+                      (a.game?.name ?? '').localeCompare(b.game?.name ?? '')
                     )
-                    .map((sharedGame: any) => (
+                    .map(sharedGame => (
                       <a
-                        href={sharedGame.game.url}
+                        key={sharedGame.game?.id}
+                        href={sharedGame.game?.url ?? '#'}
                         target="_blank"
                         rel="noreferrer"
                       >
                         <Stack
-                          key={sharedGame.game.appid}
                           direction="row"
                           sx={{
                             alignItems: 'center',
                             my: 1,
                           }}
                         >
-                          <Avatar src={sharedGame.game.image} sx={{ mr: 2 }} />
+                          <Avatar
+                            src={sharedGame.game?.image ?? ''}
+                            sx={{ mr: 2 }}
+                            alt={sharedGame.game?.name ?? 'Game'}
+                          />
                           <Typography variant="body1">
-                            {sharedGame.game.name}
+                            {sharedGame.game?.name}
                           </Typography>
                         </Stack>
                       </a>
                     ))}
                 </Box>
-              </>
+              </React.Fragment>
             ))}
         </Box>
       )}

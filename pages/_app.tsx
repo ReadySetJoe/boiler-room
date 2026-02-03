@@ -13,8 +13,10 @@ import { AppBar, Container } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+import ErrorBoundary from '../components/ErrorBoundary';
 import Footer from '../components/footer';
 import Header from '../components/header';
+import { ToastProvider } from '../contexts/ToastContext';
 import client from '../lib/apollo';
 
 const darkTheme = createTheme({
@@ -22,7 +24,7 @@ const darkTheme = createTheme({
     mode: 'dark',
   },
   typography: {
-    fontFamily: 'monospace',
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   },
 });
 
@@ -41,14 +43,22 @@ export default function App({
       </Head>
       <SessionProvider session={session}>
         <ThemeProvider theme={darkTheme}>
-          <AppBar position="static">
-            <Header />
-          </AppBar>
-          <Container maxWidth="lg" sx={{ paddingTop: 5, minHeight: '100vh' }}>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </Container>
-          <Footer />
+          <CssBaseline />
+          <ToastProvider>
+            <ErrorBoundary>
+              <AppBar position="static">
+                <Header />
+              </AppBar>
+              <Container
+                component="main"
+                maxWidth="lg"
+                sx={{ paddingTop: 5, minHeight: '100vh' }}
+              >
+                <Component {...pageProps} />
+              </Container>
+              <Footer />
+            </ErrorBoundary>
+          </ToastProvider>
         </ThemeProvider>
       </SessionProvider>
     </ApolloProvider>

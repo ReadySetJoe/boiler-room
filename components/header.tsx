@@ -1,5 +1,4 @@
-import { Toolbar, Typography } from '@mui/material';
-
+import { Box, Toolbar, Typography } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import Login from './login';
@@ -7,6 +6,7 @@ import Login from './login';
 const Header = () => {
   return (
     <Toolbar
+      component="nav"
       sx={{
         paddingTop: '16px',
         paddingBottom: '6px',
@@ -15,29 +15,39 @@ const Header = () => {
         justifyContent: 'space-between',
         backgroundColor: '#000000',
       }}
+      role="navigation"
+      aria-label="Main navigation"
     >
-      <Link href="/">
+      <Link href="/" aria-label="Go to homepage">
         <Image
           src="/logo-title.svg"
-          alt="Steam Boiler Room"
+          alt="Steam Boiler Room logo"
           width={200}
           height={50}
+          priority
         />
       </Link>
-      {/* home link */}
-      <Link href="/">
-        <Typography
-          sx={{
-            display: {
-              xs: 'none',
-              sm: 'block',
-            },
-          }}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        <Link
+          href="/"
+          style={{ textDecoration: 'none' }}
+          aria-label="Home page"
         >
-          Home
-        </Typography>
-      </Link>
-      <Login />
+          <Typography
+            sx={{
+              display: {
+                xs: 'none',
+                sm: 'block',
+              },
+              color: 'text.primary',
+              '&:hover': { color: 'primary.main' },
+            }}
+          >
+            Home
+          </Typography>
+        </Link>
+        <Login />
+      </Box>
     </Toolbar>
   );
 };
