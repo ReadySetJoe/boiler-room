@@ -16,7 +16,7 @@
   "dependencies": {
     "@apollo/client": "^3.8.3",
     "@apollo/server": "^4.9.3",
-    "@as-integrations/next": "^2.0.2",
+    "@as-integrations/next": "^3.0.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
