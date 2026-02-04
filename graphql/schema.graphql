@@ -55,6 +55,26 @@ input BundleSortOptions {
   order: SortOrder!
 }
 
+type StorePrice {
+  storeId: String!
+  storeName: String!
+  price: String!
+  retailPrice: String!
+  savings: String
+  dealUrl: String!
+  storeIcon: String
+}
+
+type MultiStoreResult {
+  gameId: String!
+  title: String!
+  thumb: String
+  cheapestPrice: String
+  cheapestEverPrice: String
+  cheapestEverDate: String
+  stores: [StorePrice!]!
+}
+
 type Query {
   getBundlesByGameName(name: String!): [SteamBundle]
   getMyBundles(steamId: String!, sort: SortOptions): [SteamBundle]
@@ -63,6 +83,8 @@ type Query {
   getSharedGames(steamIds: [String!]!): [SharedGame]
   getUserBundles(steamId: String!, sort: BundleSortOptions): [SteamBundle]
   searchSteam(q: String!, bundlesOnly: Boolean): [SteamGame]
+  searchMultiStore(q: String!): [MultiStoreResult]
+  getGamePrices(gameId: String!): MultiStoreResult
   updateUserBundles(steamId: String!): [SteamBundle]
   updateUserGameBundle(steamId: String!, gameName: String!): SteamBundle
 }

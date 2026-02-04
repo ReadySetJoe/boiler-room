@@ -16,9 +16,14 @@ import {
 
 const pages = [
   {
-    name: 'Import Bundles',
+    name: 'Import Library',
     url: '/twitch/bundles',
-    description: 'Import your library to find ALL bundles',
+    description: 'Import your full Steam library to find ALL available bundles at once',
+  },
+  {
+    name: 'Multi-Store Search',
+    url: '/twitch/multi-store',
+    description: 'Search across Steam, Humble Bundle, Fanatical, and GOG with price comparison',
   },
 ];
 

@@ -1,0 +1,19 @@
+query GetGamePrices($gameId: String!) {
+  getGamePrices(gameId: $gameId) {
+    gameId
+    title
+    thumb
+    cheapestPrice
+    cheapestEverPrice
+    cheapestEverDate
+    stores {
+      storeId
+      storeName
+      price
+      retailPrice
+      savings
+      dealUrl
+      storeIcon
+    }
+  }
+}

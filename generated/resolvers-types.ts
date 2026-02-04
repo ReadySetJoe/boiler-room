@@ -27,14 +27,27 @@ export type BundleSortOptions = {
   order: SortOrder;
 };
 
+export type MultiStoreResult = {
+  __typename?: 'MultiStoreResult';
+  cheapestEverDate?: Maybe<Scalars['String']['output']>;
+  cheapestEverPrice?: Maybe<Scalars['String']['output']>;
+  cheapestPrice?: Maybe<Scalars['String']['output']>;
+  gameId: Scalars['String']['output'];
+  stores: Array<StorePrice>;
+  thumb?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   getBundlesByGameName?: Maybe<Array<Maybe<SteamBundle>>>;
+  getGamePrices?: Maybe<MultiStoreResult>;
   getMyBundles?: Maybe<Array<Maybe<SteamBundle>>>;
   getMyFriends?: Maybe<Array<Maybe<SteamFriend>>>;
   getMyLibrary?: Maybe<Array<Maybe<SteamGame>>>;
   getSharedGames?: Maybe<Array<Maybe<SharedGame>>>;
   getUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
+  searchMultiStore?: Maybe<Array<Maybe<MultiStoreResult>>>;
   searchSteam?: Maybe<Array<Maybe<SteamGame>>>;
   updateUserBundles?: Maybe<Array<Maybe<SteamBundle>>>;
   updateUserGameBundle?: Maybe<SteamBundle>;
@@ -43,6 +56,11 @@ export type Query = {
 
 export type QueryGetBundlesByGameNameArgs = {
   name: Scalars['String']['input'];
+};
+
+
+export type QueryGetGamePricesArgs = {
+  gameId: Scalars['String']['input'];
 };
 
 
@@ -71,6 +89,11 @@ export type QueryGetSharedGamesArgs = {
 export type QueryGetUserBundlesArgs = {
   sort?: InputMaybe<BundleSortOptions>;
   steamId: Scalars['String']['input'];
+};
+
+
+export type QuerySearchMultiStoreArgs = {
+  q: Scalars['String']['input'];
 };
 
 
@@ -138,6 +161,17 @@ export type SteamGame = {
   playtimeForever?: Maybe<Scalars['Int']['output']>;
   price?: Maybe<Scalars['String']['output']>;
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type StorePrice = {
+  __typename?: 'StorePrice';
+  dealUrl: Scalars['String']['output'];
+  price: Scalars['String']['output'];
+  retailPrice: Scalars['String']['output'];
+  savings?: Maybe<Scalars['String']['output']>;
+  storeIcon?: Maybe<Scalars['String']['output']>;
+  storeId: Scalars['String']['output'];
+  storeName: Scalars['String']['output'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -217,6 +251,7 @@ export type ResolversTypes = ResolversObject<{
   BundleSortOptions: BundleSortOptions;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  MultiStoreResult: ResolverTypeWrapper<MultiStoreResult>;
   Query: ResolverTypeWrapper<{}>;
   SharedGame: ResolverTypeWrapper<SharedGame>;
   SortField: SortField;
@@ -225,6 +260,7 @@ export type ResolversTypes = ResolversObject<{
   SteamBundle: ResolverTypeWrapper<SteamBundle>;
   SteamFriend: ResolverTypeWrapper<SteamFriend>;
   SteamGame: ResolverTypeWrapper<SteamGame>;
+  StorePrice: ResolverTypeWrapper<StorePrice>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 }>;
 
@@ -234,22 +270,37 @@ export type ResolversParentTypes = ResolversObject<{
   BundleSortOptions: BundleSortOptions;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  MultiStoreResult: MultiStoreResult;
   Query: {};
   SharedGame: SharedGame;
   SortOptions: SortOptions;
   SteamBundle: SteamBundle;
   SteamFriend: SteamFriend;
   SteamGame: SteamGame;
+  StorePrice: StorePrice;
   String: Scalars['String']['output'];
+}>;
+
+export type MultiStoreResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['MultiStoreResult'] = ResolversParentTypes['MultiStoreResult']> = ResolversObject<{
+  cheapestEverDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  cheapestEverPrice?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  cheapestPrice?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  gameId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  stores?: Resolver<Array<ResolversTypes['StorePrice']>, ParentType, ContextType>;
+  thumb?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getBundlesByGameName?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetBundlesByGameNameArgs, 'name'>>;
+  getGamePrices?: Resolver<Maybe<ResolversTypes['MultiStoreResult']>, ParentType, ContextType, RequireFields<QueryGetGamePricesArgs, 'gameId'>>;
   getMyBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetMyBundlesArgs, 'steamId'>>;
   getMyFriends?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamFriend']>>>, ParentType, ContextType, RequireFields<QueryGetMyFriendsArgs, 'steamId'>>;
   getMyLibrary?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QueryGetMyLibraryArgs, 'steamId'>>;
   getSharedGames?: Resolver<Maybe<Array<Maybe<ResolversTypes['SharedGame']>>>, ParentType, ContextType, RequireFields<QueryGetSharedGamesArgs, 'steamIds'>>;
   getUserBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryGetUserBundlesArgs, 'steamId'>>;
+  searchMultiStore?: Resolver<Maybe<Array<Maybe<ResolversTypes['MultiStoreResult']>>>, ParentType, ContextType, RequireFields<QuerySearchMultiStoreArgs, 'q'>>;
   searchSteam?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamGame']>>>, ParentType, ContextType, RequireFields<QuerySearchSteamArgs, 'q'>>;
   updateUserBundles?: Resolver<Maybe<Array<Maybe<ResolversTypes['SteamBundle']>>>, ParentType, ContextType, RequireFields<QueryUpdateUserBundlesArgs, 'steamId'>>;
   updateUserGameBundle?: Resolver<Maybe<ResolversTypes['SteamBundle']>, ParentType, ContextType, RequireFields<QueryUpdateUserGameBundleArgs, 'gameName' | 'steamId'>>;
@@ -289,11 +340,24 @@ export type SteamGameResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type StorePriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['StorePrice'] = ResolversParentTypes['StorePrice']> = ResolversObject<{
+  dealUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  retailPrice?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  savings?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  storeIcon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  storeId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  storeName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
+  MultiStoreResult?: MultiStoreResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   SharedGame?: SharedGameResolvers<ContextType>;
   SteamBundle?: SteamBundleResolvers<ContextType>;
   SteamFriend?: SteamFriendResolvers<ContextType>;
   SteamGame?: SteamGameResolvers<ContextType>;
+  StorePrice?: StorePriceResolvers<ContextType>;
 }>;
 

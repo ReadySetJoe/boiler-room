@@ -1,0 +1,8 @@
+query SearchMultiStore($q: String!) {
+  searchMultiStore(q: $q) {
+    gameId
+    title
+    thumb
+    cheapestPrice
+  }
+}

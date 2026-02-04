@@ -4,7 +4,13 @@
       "Bash(npx tsc:*)",
       "Bash(npm run build)",
       "WebFetch(domain:store.steampowered.com)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx next build:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(npm run codegen:*)",
+      "Bash(tr:*)"
     ]
   }
 }

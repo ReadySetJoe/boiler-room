@@ -14,11 +14,13 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "query GetBundlesByGameName($name: String!) {\n  getBundlesByGameName(name: $name) {\n    id\n    name\n    image\n    url\n    price\n    discount\n    games {\n      id\n      name\n      image\n      url\n    }\n  }\n}": types.GetBundlesByGameNameDocument,
+    "query GetGamePrices($gameId: String!) {\n  getGamePrices(gameId: $gameId) {\n    gameId\n    title\n    thumb\n    cheapestPrice\n    cheapestEverPrice\n    cheapestEverDate\n    stores {\n      storeId\n      storeName\n      price\n      retailPrice\n      savings\n      dealUrl\n      storeIcon\n    }\n  }\n}": types.GetGamePricesDocument,
     "query GetMyBundles($steamId: String!, $sort: SortOptions) {\n  getMyBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    games {\n      id\n      name\n      image\n      url\n    }\n  }\n}": types.GetMyBundlesDocument,
     "query GetMyFriends($steamId: String!) {\n  getMyFriends(steamId: $steamId) {\n    id\n    name\n    avatar\n  }\n}": types.GetMyFriendsDocument,
     "query GetMyLibrary($steamId: String!, $sort: SortOptions) {\n  getMyLibrary(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    playtimeForever\n  }\n}": types.GetMyLibraryDocument,
     "query GetSharedGames($steamIds: [String!]!) {\n  getSharedGames(steamIds: $steamIds) {\n    game {\n      id\n      name\n      image\n      url\n    }\n    friends {\n      id\n    }\n  }\n}": types.GetSharedGamesDocument,
     "query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {\n  getUserBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    discount\n  }\n}": types.GetUserBundlesDocument,
+    "query SearchMultiStore($q: String!) {\n  searchMultiStore(q: $q) {\n    gameId\n    title\n    thumb\n    cheapestPrice\n  }\n}": types.SearchMultiStoreDocument,
     "query SearchSteam($q: String!, $bundlesOnly: Boolean) {\n  searchSteam(q: $q, bundlesOnly: $bundlesOnly) {\n    id\n    name\n    image\n    url\n    price\n  }\n}": types.SearchSteamDocument,
     "query UpdateUserBundles($steamId: String!) {\n  updateUserBundles(steamId: $steamId) {\n    id\n    name\n    image\n    url\n    price\n  }\n}": types.UpdateUserBundlesDocument,
     "query UpdateUserGameBundle($steamId: String!, $gameName: String!) {\n  updateUserGameBundle(steamId: $steamId, gameName: $gameName) {\n    id\n  }\n}": types.UpdateUserGameBundleDocument,
@@ -45,6 +47,10 @@ export function graphql(source: "query GetBundlesByGameName($name: String!) {\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "query GetGamePrices($gameId: String!) {\n  getGamePrices(gameId: $gameId) {\n    gameId\n    title\n    thumb\n    cheapestPrice\n    cheapestEverPrice\n    cheapestEverDate\n    stores {\n      storeId\n      storeName\n      price\n      retailPrice\n      savings\n      dealUrl\n      storeIcon\n    }\n  }\n}"): (typeof documents)["query GetGamePrices($gameId: String!) {\n  getGamePrices(gameId: $gameId) {\n    gameId\n    title\n    thumb\n    cheapestPrice\n    cheapestEverPrice\n    cheapestEverDate\n    stores {\n      storeId\n      storeName\n      price\n      retailPrice\n      savings\n      dealUrl\n      storeIcon\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "query GetMyBundles($steamId: String!, $sort: SortOptions) {\n  getMyBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    games {\n      id\n      name\n      image\n      url\n    }\n  }\n}"): (typeof documents)["query GetMyBundles($steamId: String!, $sort: SortOptions) {\n  getMyBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    games {\n      id\n      name\n      image\n      url\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -62,6 +68,10 @@ export function graphql(source: "query GetSharedGames($steamIds: [String!]!) {\n
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {\n  getUserBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    discount\n  }\n}"): (typeof documents)["query GetUserBundles($steamId: String!, $sort: BundleSortOptions) {\n  getUserBundles(steamId: $steamId, sort: $sort) {\n    id\n    name\n    image\n    url\n    price\n    discount\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query SearchMultiStore($q: String!) {\n  searchMultiStore(q: $q) {\n    gameId\n    title\n    thumb\n    cheapestPrice\n  }\n}"): (typeof documents)["query SearchMultiStore($q: String!) {\n  searchMultiStore(q: $q) {\n    gameId\n    title\n    thumb\n    cheapestPrice\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
