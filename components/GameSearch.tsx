@@ -93,12 +93,29 @@ const GameSearch = ({ label = 'Search for bundles' }: GameSearchProps) => {
                 '&:hover': { bgcolor: 'action.hover' },
               }}
             >
-              <CardMedia
-                component="img"
-                sx={{ width: 120, objectFit: 'contain' }}
-                image={game.image ?? ''}
-                alt={game.name}
-              />
+              {game.image ? (
+                <CardMedia
+                  component="img"
+                  sx={{ width: 120, objectFit: 'contain' }}
+                  image={game.image}
+                  alt={game.name}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    width: 120,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: 'action.hover',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    No image
+                  </Typography>
+                </Box>
+              )}
               <CardContent>
                 <Typography variant="subtitle1">{game.name}</Typography>
                 <Typography variant="body2" color="text.secondary">

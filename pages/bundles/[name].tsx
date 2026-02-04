@@ -80,12 +80,29 @@ export default function BundleDetailPage() {
                 '&:hover': { bgcolor: 'action.hover' },
               }}
             >
-              <CardMedia
-                component="img"
-                sx={{ width: 128, objectFit: 'contain' }}
-                image={bundle.image}
-                alt={bundle.name}
-              />
+              {bundle.image ? (
+                <CardMedia
+                  component="img"
+                  sx={{ width: 128, objectFit: 'contain' }}
+                  image={bundle.image}
+                  alt={bundle.name}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    width: 128,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: 'action.hover',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    No image
+                  </Typography>
+                </Box>
+              )}
               <CardContent>
                 <Typography variant="subtitle1" fontWeight={500}>
                   {bundle.name}

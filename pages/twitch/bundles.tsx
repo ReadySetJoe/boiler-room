@@ -227,18 +227,17 @@ export default function Bundles() {
   }
 
   return (
-    <Container component="main">
-      <Typography variant="h4" sx={{ my: 3 }}>
-        Import Bundles
-      </Typography>
-
+    <>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
         sx={{ mb: 3 }}
         alignItems="center"
-        justifyContent="center"
+        justifyContent="space-between"
       >
+        <Typography variant="h4" sx={{ my: 3 }}>
+          Import Bundles
+        </Typography>
         <Button
           onClick={handleRefreshBundles}
           disabled={isRefreshing}
@@ -314,12 +313,29 @@ export default function Bundles() {
                   '&:hover': { bgcolor: 'action.hover' },
                 }}
               >
-                <CardMedia
-                  component="img"
-                  sx={{ width: 128, objectFit: 'contain' }}
-                  image={bundle.image}
-                  alt={bundle.name}
-                />
+                {bundle.image ? (
+                  <CardMedia
+                    component="img"
+                    image={bundle.image}
+                    alt={bundle.name}
+                    sx={{ width: '30%', objectFit: 'contain' }}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      width: '30%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      bgcolor: 'action.hover',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Typography variant="caption" color="text.secondary">
+                      No image
+                    </Typography>
+                  </Box>
+                )}
                 <CardContent>
                   <Typography variant="subtitle1" fontWeight={500}>
                     {bundle.name}
@@ -335,6 +351,6 @@ export default function Bundles() {
             </Grid>
           ))}
       </Grid>
-    </Container>
+    </>
   );
 }

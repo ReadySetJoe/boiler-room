@@ -89,15 +89,15 @@ const Library = () => {
 
   return (
     <Container component="section">
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Library
-      </Typography>
       <Stack spacing={2}>
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
           sx={{ pb: 2 }}
         >
+          <Typography variant="h4" sx={{ paddingRight: 4 }}>
+            Library
+          </Typography>
           <TextField
             label="Search"
             value={search}
@@ -156,11 +156,13 @@ const Library = () => {
                     />
                     <Typography
                       variant="body1"
-                      sx={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
+                      sx={
+                        {
+                          // overflow: 'hidden',
+                          // textOverflow: 'ellipsis',
+                          // whiteSpace: 'nowrap',
+                        }
+                      }
                     >
                       {game.name}
                     </Typography>

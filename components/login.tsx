@@ -11,7 +11,8 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { PROVIDER_ID } from 'next-auth-steam';
+
+const STEAM_PROVIDER_ID = 'steam';
 
 export default function Login() {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -36,7 +37,7 @@ export default function Login() {
 
   if (!session) {
     return (
-      <Button onClick={() => signIn(PROVIDER_ID)} aria-label="Sign in with Steam">
+      <Button onClick={() => signIn(STEAM_PROVIDER_ID)} aria-label="Sign in with Steam">
         Sign in
       </Button>
     );
